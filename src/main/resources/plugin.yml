@@ -1,0 +1,13 @@
+# https://www.spigotmc.org/wiki/plugin-yml/
+
+name: MinecraftRP
+main: mlh.goofygoofies.minecraft_rp.MinecraftRP
+version: 0.1.0
+
+api-version: 1.16
+authors: [Ali-Doggaz, eliboss, jkmartindale, kescardoso]
+website: https://github.com/eliboss/minecraft_rp_mod
+
+# commands:
+
+# permissions:

@@ -1,6 +1,7 @@
 .DS_Store
 data/lib/spigot-1.16.5.jar
 .vscode
+.idea
 
 # Java build output
 bin

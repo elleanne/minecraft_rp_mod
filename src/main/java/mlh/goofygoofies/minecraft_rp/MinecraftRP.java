@@ -44,24 +44,13 @@ public class MinecraftRP extends JavaPlugin {
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
     {
-        if (commandLabel.equalsIgnoreCase("jail"))
-        {
-           // TODO Check if the player using this command is a policeman
-           if (Bukkit.getPlayerExact(args[0]) != null){
-               Player jailed_player = Bukkit.getPlayerExact(args[0]);
-               Location jail_location = new Location(Bukkit.getServer().getWorld("world"), 0, 0, 30);
-               jailed_player.teleport(jail_location);
-               Integer time = 10000;
-               if (args.length>1){
-                   try{time = Integer.parseInt(args[1]);}
-                   catch(Exception e){sender.sendMessage("Invalid time flag");}
-               }
-               jailed_player_waiter jailed_player_waiting = new jailed_player_waiter(jailed_player, time);
-               jailed_player_waiting.run();
-               return true;
-           }
-            return false;
+        switch(commandLabel){
+            case "jail":
+                Policeman policeman = new Policeman(sender);
+                policeman.jail(args);
+                return true;
         }
+
         return true;
     }
 

@@ -57,7 +57,7 @@ public class allPlayers extends Jobs{
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
             Player senderPlayer = (Player) sender;
             if (p.getWorld() ==  senderPlayer.getWorld() && p.getLocation().distanceSquared(senderPlayer.getLocation()) <= d2) {
-                p.sendMessage(sender.getName() + " rolled the dice and obtained a " + result);
+                p.sendMessage(ChatColor.GRAY + sender.getName() + " rolled the dice and obtained a " + result);
             }
         }
         return true;

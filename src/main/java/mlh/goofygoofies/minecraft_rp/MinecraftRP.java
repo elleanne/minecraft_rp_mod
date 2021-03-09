@@ -9,26 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.World;
 
 
-class jailed_player_waiter implements Runnable {
-    Player jailed_player;
-    Integer time;
-
-    public jailed_player_waiter(Player jailed_player, Integer time){
-        this.jailed_player = jailed_player;
-        this.time = time;
-    }
-
-    public void run(){
-        try{Thread.sleep(time);}
-        catch(Exception e){
-            e.getStackTrace();
-        }
-        Location out_of_jail_location = new Location(Bukkit.getServer().getWorld("world"), 120, 120, 50);
-        jailed_player.teleport(out_of_jail_location);
-
-    }
-}
-
 public class MinecraftRP extends JavaPlugin {
     @Override
     public void onEnable() {
@@ -45,10 +25,30 @@ public class MinecraftRP extends JavaPlugin {
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
     {
         switch(commandLabel){
-            case "jail":
+            case "jail": {
                 Policeman policeman = new Policeman(sender);
-                policeman.jail(args);
-                return true;
+                boolean res = policeman.jail(args);
+                return res;
+            }
+
+            case "me": {
+                allPlayers player = new allPlayers(sender);
+                boolean res = player.describeAction(args);
+                return res;
+            }
+
+            case "it": {
+                allPlayers player = new allPlayers(sender);
+                boolean res = player.describeEvent(args);
+                return res;
+            }
+
+            case "roll": {
+                allPlayers player = new allPlayers(sender);
+                boolean res = player.rollDice();
+                return res;
+            }
+
         }
 
         return true;

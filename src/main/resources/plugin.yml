@@ -10,6 +10,18 @@ website: https://github.com/eliboss/minecraft_rp_mod
 
 commands:
   jail:
-    usage: /jail
+    usage: /jail <Player Name> <Optional time in ms>
     description: puts a player in jail for n minutes
+
+  me:
+    usage: Please describe your action. E.g '/me punches the developer'
+    description: Describes the actions of the sender to nearby players
+
+  it:
+    usage: Please describe the event. E.g '/it The sky broke like an egg into full sunset, and the water caught fire.'
+    description: Describes an event or a narrative.
+
+  roll:
+    description: generates a random number between 100 and 0, to determine if an action has succeeded or not.
+
 # permissions:

@@ -1,13 +1,21 @@
 # https://www.spigotmc.org/wiki/plugin-yml/
-
+main: Main.java.mlh.goofygoofies.minecraft_rp.MinecraftRP
 name: MinecraftRP
-main: mlh.goofygoofies.minecraft_rp.MinecraftRP
 version: 0.1.0
 
 api-version: 1.16
+load: STARTUP
 authors: [Ali-Doggaz, eliboss, jkmartindale, kescardoso]
 website: https://github.com/eliboss/minecraft_rp_mod
 
-# commands:
+commands:
+  claim:
+    description: claim land 9 blocks at a time
+  
+  selfheal:
+    description: heal up to 50 percent of your health if you are on claimed land
+  
+  unclaim:
+    description: unclaim land owned by player who calls this command 9 blocks at a time
 
 # permissions:

@@ -2,13 +2,9 @@ package mlh.goofygoofies.minecraft_rp;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.ChatColor;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class allPlayers extends Jobs{
@@ -22,11 +18,11 @@ public class allPlayers extends Jobs{
         if (args.length == 0) {
             return false;
         }
-        int d2 = 50 * 50;
+        int distance = 50 * 50;
         String actionDescription = super.argsToSingleString(args);
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
             Player senderPlayer = (Player) sender;
-            if (p.getWorld() ==  senderPlayer.getWorld() && p.getLocation().distanceSquared(senderPlayer.getLocation()) <= d2) {
+            if (p.getWorld() ==  senderPlayer.getWorld() && p.getLocation().distanceSquared(senderPlayer.getLocation()) <= distance) {
                 p.sendMessage(ChatColor.BLUE + sender.getName() + actionDescription);
             }
         }
@@ -38,11 +34,11 @@ public class allPlayers extends Jobs{
         if (args.length == 0) {
             return false;
         }
-        int d2 = 50 * 50;
+        int distance = 50 * 50;
         String eventDescription = super.argsToSingleString(args);
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
             Player senderPlayer = (Player) sender;
-            if (p.getWorld() ==  senderPlayer.getWorld() && p.getLocation().distanceSquared(senderPlayer.getLocation()) <= d2) {
+            if (p.getWorld() ==  senderPlayer.getWorld() && p.getLocation().distanceSquared(senderPlayer.getLocation()) <= distance) {
                 p.sendMessage(ChatColor.GREEN + eventDescription);
             }
         }
@@ -53,11 +49,22 @@ public class allPlayers extends Jobs{
     public boolean rollDice(){
         Random r = new Random();
         int result = r.nextInt(101);
-        int d2 = 50 * 50;
+        int distance = 50 * 50;
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
             Player senderPlayer = (Player) sender;
-            if (p.getWorld() ==  senderPlayer.getWorld() && p.getLocation().distanceSquared(senderPlayer.getLocation()) <= d2) {
+            if (p.getWorld() ==  senderPlayer.getWorld() && p.getLocation().distanceSquared(senderPlayer.getLocation()) <= distance) {
                 p.sendMessage(ChatColor.GRAY + sender.getName() + " rolled the dice and obtained a " + result);
+            }
+        }
+        return true;
+    }
+
+    public boolean showID(){
+        int distance = 50 * 50;
+        for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+            Player senderPlayer = (Player) sender;
+            if (p.getWorld() ==  senderPlayer.getWorld() && p.getLocation().distanceSquared(senderPlayer.getLocation()) <= distance) {
+                p.sendMessage(ChatColor.GREEN + "ID indicates: \n Name: " + sender.getName());
             }
         }
         return true;

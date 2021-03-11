@@ -13,6 +13,10 @@ commands:
     usage: /jail <Player Name> <Optional time in ms>
     description: puts a player in jail for n minutes
 
+  inspect:
+    usage: /inspect <Player Name>
+    description: Checks if the player has any illegal items
+
   me:
     usage: Please describe your action. E.g '/me punches the developer'
     description: Describes the actions of the sender to nearby players
@@ -22,6 +26,18 @@ commands:
     description: Describes an event or a narrative.
 
   roll:
+    usage: /roll generates a random number between 0 and 100, to determine how successful an action was.
     description: generates a random number between 100 and 0, to determine if an action has succeeded or not.
 
+  ID:
+    usage: /ID shows you ID card to players near you.
+    description: Show your ID card to players near you (first and last name).
+
+  heal:
+    usage: /heal <Player Name>
+    description: Completely heals a player.
+
+  job:
+    usage: /job <Job Name (Policeman, Doctor, or Judge)>
+    description: Changes the player's job.
 # permissions:

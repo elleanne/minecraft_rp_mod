@@ -5,6 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 class jailed_player_waiter implements Runnable {
     Player jailed_player;
@@ -27,12 +28,16 @@ class jailed_player_waiter implements Runnable {
 }
 
 public class Policeman extends Jobs{
+    String [] illegalItemsList;
+
     public Policeman(CommandSender sender){
         super(sender);
+        illegalItemsList = new String[]{
+                "SWORD", "BOW", "ARROW", "TNT", "DIAMOND"
+        };
     }
 
     public boolean jail(String[] args){
-        {
             // TODO Check if the player using this command is a policeman
 
             // Check if command is valid
@@ -73,6 +78,46 @@ public class Policeman extends Jobs{
             }
 
             return false;
-        }
     }
+
+    public boolean inspect(String[] args){
+        if (args.length == 0) {
+            sender.sendMessage("Please indicate a player to jail. /jail <player name> <duration>");
+            return true;
+        }
+
+        if (Bukkit.getPlayerExact(args[0]) != null) {
+            Player playerToInspect = Bukkit.getPlayerExact(args[0]);
+            if (playerToInspect == null) {
+                sender.sendMessage("Invalid Player Name");
+                return true;
+            }
+            Player Sender = (Player) sender;
+            // if the player is too far from the sender, displays an error message to the sender
+            if (playerToInspect.getLocation().distance(Sender.getLocation()) > 100) {
+                sender.sendMessage("Player too far...");
+                return true;
+            }
+            ItemStack[] inv = playerToInspect.getInventory().getContents();
+            boolean illegalItemsFound = false;
+            for (ItemStack item : inv) {
+                if (item == null) continue;
+                String itemName = item.getType().toString();
+                for(String illegalItem : illegalItemsList) {
+                    if (itemName.contains(illegalItem)) {
+                        if (!illegalItemsFound) {
+                            sender.sendMessage(ChatColor.RED + "Illegal items found!");
+                            illegalItemsFound = true;
+                        }
+                        sender.sendMessage(ChatColor.GRAY + "Item: " + itemName.toLowerCase() + " - Qt: " + item.getAmount());
+                        break;
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+
 }

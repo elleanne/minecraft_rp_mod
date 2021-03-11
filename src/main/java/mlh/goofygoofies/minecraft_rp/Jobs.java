@@ -16,4 +16,31 @@ public class Jobs {
         }
         return string;
     }
+
+    //changes the job of a player
+    public boolean jobChange(String[] args){
+        String jobName = args[0];
+        switch(jobName){
+            case "Policeman":{
+                //TODO reskin player
+                //TODO TP PLAYER TO POLICE STATION
+                //TODO GIVE PLAYER POLICEMAN STUFF (Weapon?)
+                return true;
+            }
+
+            case "Doctor":{
+                //TODO reskin player
+                //TODO TP PLAYER TO HOSPITAL
+                return true;
+            }
+
+            case "Judge":{
+                //TODO reskin player
+                //TODO TP PLAYER TO THE COURT
+            }
+
+        }
+
+        return false;
+    }
 }

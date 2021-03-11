@@ -1,4 +1,4 @@
-package Main.java.mlh.goofygoofies.minecraft_rp;
+package mlh.goofygoofies.minecraft_rp;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,8 +15,7 @@ import org.bukkit.event.HandlerList;
 
 public class LandClaims {
 
-    // X_START, Y_START are the coordinates to start eligible land that can be owned
-    // at
+    // X_START, Y_START are the coordinates to start eligible land that can be owned at.
     // TODO: Need to make function for admin to change this?
     public final int X_START = 10;
     public final int Y_START = 10;
@@ -60,14 +59,14 @@ public class LandClaims {
             // Append strings from array
             for (int i = 0; i < landClaims.length; i++) {
                 for (int j = 0; j < landClaims[i].length; j++) {
-                    if(landClaims[i][j]!= null) {
+                    if (landClaims[i][j] != null) {
                         sb.append(i + ":" + j + ":" + landClaims[i][j]);
                         sb.append(",");
-                        
-                        //sb.replace(0, sb.length(), "");
+
+                        // sb.replace(0, sb.length(), "");
                     }
                 }
-                
+
             }
             br.write(sb.toString());
             br.close();
@@ -80,7 +79,7 @@ public class LandClaims {
     public boolean setClaim(Player p) {
         double xCoor = p.getLocation().getX() - X_START;
         double yCoor = p.getLocation().getY() - Y_START;
-        //String id = p.getPlayerListName();
+        // String id = p.getPlayerListName();
 
         if (xCoor < 0 || xCoor > 499 || yCoor < 0 || yCoor > 499) {
             p.sendMessage(p.getLocation() + " " + p.getLocation().getX() + " , " + p.getLocation().getY()
@@ -93,12 +92,12 @@ public class LandClaims {
                 for (int j = -1; j < 2; j++) {
                     int m = (int) yCoor + j;
                     if (landClaims[l][m] != null) {
-                        if (landClaims[l][m].compareTo( p.getPlayerListName()) == 0) {
+                        if (landClaims[l][m].compareTo(p.getPlayerListName()) == 0) {
                             countPClaims++;
                         } else {
                             p.sendMessage(landClaims[l][m] + ", This land is already claimed! Try another location.");
                             return false;
-                        } 
+                        }
                     }
                 }
             }

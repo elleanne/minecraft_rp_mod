@@ -1,4 +1,4 @@
-package Main.java.mlh.goofygoofies.minecraft_rp;
+package mlh.goofygoofies.minecraft_rp;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,8 +15,7 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 
-
-public class MinecraftRP extends JavaPlugin  implements Listener {
+public class MinecraftRP extends JavaPlugin implements Listener {
     Map<Integer, String> playersJobsList = new HashMap<>();
     LandClaims lc = new LandClaims(); // TODO: need to make singleton
 
@@ -36,15 +35,17 @@ public class MinecraftRP extends JavaPlugin  implements Listener {
     @SuppressWarnings("deprecation")
     @EventHandler
     /*
-    Disables normal health regeneration.
-    With food, players' health will only regen to 50% of their max health. To heal completely, you'll have
-    to visit a doctor and get healed by him/her (no sexism here).
-    */
+     * Disables normal health regeneration. With food, players' health will only
+     * regen to 50% of their max health. To heal completely, you'll have to visit a
+     * doctor and get healed by him/her (no sexism here).
+     */
     public void healthRegen(EntityRegainHealthEvent event) {
-        if (!(event.getEntity()  instanceof Player)) return;
+        if (!(event.getEntity() instanceof Player))
+            return;
         Player player = (Player) event.getEntity();
         event.setCancelled(true);
-        if ((Math.round(player.getHealth() * 100.0) / 100.0) > 10) return;
+        if ((Math.round(player.getHealth() * 100.0) / 100.0) > 10)
+            return;
         Bukkit.getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
             public void run() {
                 if (((Math.round(player.getHealth() * 100.0) / 100.0) < 10) && player.getHealth() > 0)
@@ -53,7 +54,6 @@ public class MinecraftRP extends JavaPlugin  implements Listener {
         }, 140L);
         return;
     }
-
 
     /* Assign default job 'Citizen' to all new players */
     @EventHandler
@@ -68,132 +68,133 @@ public class MinecraftRP extends JavaPlugin  implements Listener {
         playersJobsList.remove(event.getPlayer().getEntityId());
     }
 
-
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         switch (commandLabel) {
 
-            // Commands for policemen
+        // Commands for policemen
 
-            case "jail": {
+        case "jail": {
+            Player player = (Player) sender;
+            if (playersJobsList.get(player.getEntityId()) != "Policeman") {
+                sender.sendMessage(ChatColor.RED + "You do not have the rights to use this command");
+                return true;
+            }
+            Policeman policeman = new Policeman(sender);
+            boolean res = policeman.jail(args);
+            return res;
+        }
+
+        case "inspect": {
+            Player player = (Player) sender;
+            if (playersJobsList.get(player.getEntityId()) != "Policeman") {
+                sender.sendMessage(ChatColor.RED + "You do not have the rights to use this command");
+                return true;
+            }
+            Policeman policeman = new Policeman(sender);
+            boolean res = policeman.inspect(args);
+            return res;
+        }
+
+        // Commands usable by all players
+
+        case "me": {
+            allPlayers player = new allPlayers(sender);
+            boolean res = player.describeAction(args);
+            return res;
+        }
+
+        case "it": {
+            allPlayers player = new allPlayers(sender);
+            boolean res = player.describeEvent(args);
+            return res;
+        }
+
+        case "roll": {
+            allPlayers player = new allPlayers(sender);
+            boolean res = player.rollDice();
+            return res;
+        }
+
+        case "ID": {
+            allPlayers player = new allPlayers(sender);
+            boolean res = player.showID();
+            return res;
+        }
+
+        // Doctor commands
+
+        case "heal": {
+            Player player = (Player) sender;
+            if (playersJobsList.get(player.getEntityId()) != "Doctor") {
+                sender.sendMessage(ChatColor.RED + "You do not have the rights to use this command");
+                return true;
+            }
+            Doctor doc = new Doctor(sender);
+            boolean res = doc.heal(args);
+            return res;
+        }
+
+        // Command to change your job
+
+        case "job": {
+            Jobs jobChanger = new Jobs(sender);
+            boolean res = jobChanger.jobChange(args);
+            if (!res)
+                return false;
+            switch (args[0]) {
+            case "Policeman": {
                 Player player = (Player) sender;
-                if (playersJobsList.get(player.getEntityId()) != "Policeman"){
-                    sender.sendMessage(ChatColor.RED + "You do not have the rights to use this command");
-                    return true;
-                }
-                Policeman policeman = new Policeman(sender);
-                boolean res = policeman.jail(args);
-                return res;
+                playersJobsList.replace(player.getEntityId(), "Policeman");
+                sender.sendMessage("You are now a policeman!");
+                return true;
             }
-
-            case "inspect": {
+            case "Doctor": {
                 Player player = (Player) sender;
-                if (playersJobsList.get(player.getEntityId()) != "Policeman"){
-                    sender.sendMessage(ChatColor.RED + "You do not have the rights to use this command");
-                    return true;
-                }
-                Policeman policeman = new Policeman(sender);
-                boolean res = policeman.inspect(args);
-                return res;
+                playersJobsList.replace(player.getEntityId(), "Doctor");
+                sender.sendMessage("You are now a doctor!");
+                return true;
             }
-
-            // Commands usable by all players
-
-            case "me": {
-                allPlayers player = new allPlayers(sender);
-                boolean res = player.describeAction(args);
-                return res;
-            }
-
-            case "it": {
-                allPlayers player = new allPlayers(sender);
-                boolean res = player.describeEvent(args);
-                return res;
-            }
-
-            case "roll": {
-                allPlayers player = new allPlayers(sender);
-                boolean res = player.rollDice();
-                return res;
-            }
-
-            case "ID": {
-                allPlayers player = new allPlayers(sender);
-                boolean res = player.showID();
-                return res;
-            }
-
-            // Doctor commands
-
-            case "heal": {
+            case "Judge": {
                 Player player = (Player) sender;
-                if (playersJobsList.get(player.getEntityId()) != "Doctor"){
-                    sender.sendMessage(ChatColor.RED + "You do not have the rights to use this command");
-                    return true;
-                }
-                Doctor doc = new Doctor(sender);
-                boolean res = doc.heal(args);
-                return res;
+                playersJobsList.replace(player.getEntityId(), "Judge");
+                sender.sendMessage("You are now a judge!");
+                return true;
             }
-
-            // Command to change your job
-
-            case "job": {
-                Jobs jobChanger = new Jobs(sender);
-                boolean res = jobChanger.jobChange(args);
-                if (!res) return false;
-                switch (args[0]) {
-                    case "Policeman": {
-                        Player player = (Player) sender;
-                        playersJobsList.replace(player.getEntityId(), "Policeman");
-                        sender.sendMessage("You are now a policeman!");
-                        return true;
-                    }
-                    case "Doctor": {
-                        Player player = (Player) sender;
-                        playersJobsList.replace(player.getEntityId(), "Doctor");
-                        sender.sendMessage("You are now a doctor!");
-                        return true;
-                    }
-                    case "Judge": {
-                        Player player = (Player) sender;
-                        playersJobsList.replace(player.getEntityId(), "Judge");
-                        sender.sendMessage("You are now a judge!");
-                        return true;
-                    }
-                    default:
-                        sender.sendMessage("Invalid Job Name. Please use Policeman, Judge or Doctor");
-                        return false;
-                }
+            default:
+                sender.sendMessage("Invalid Job Name. Please use Policeman, Judge or Doctor");
+                return false;
             }
         }
-    Player player = null;
-		if (sender instanceof Player) {
-			player = (Player) sender;
-		} else {
-			sender.sendMessage("You must be a player!");
-			return false;
-		}
-      		// claim land
-		if (cmd.getName().equalsIgnoreCase("claim") && player != null) {
-			return lc.setClaim(player);
-		} else if (cmd.getName().equalsIgnoreCase("unclaim") && player != null) { // unclaim land
-			return lc.unclaim(player);
-		} else if (cmd.getName().equalsIgnoreCase("selfheal") && player != null) { // self heal this player when on land owned by this player
-			if (lc.getClaim(player)) {
-				double health = player.getHealth();
-				if (health < (player.getHealthScale() / 2)) {
-					health = player.getHealthScale() / 2;
-					player.setHealth(health);
-					getLogger().info(player.getHealth() + " " + player.getHealthScale());
-					player.sendMessage("You partially healed yourself.");
-					return true;
-				} else {
-					player.sendMessage("You already have 50% or more of your health.");
-				}
-			} else {
-				player.sendMessage("You cannot heal yourself when you are not on your land.");
-			}
-		}
+        }
+        Player player = null;
+        if (sender instanceof Player) {
+            player = (Player) sender;
+        } else {
+            sender.sendMessage("You must be a player!");
+            return false;
+        }
+        
+        if (cmd.getName().equalsIgnoreCase("claim") && player != null) { // claim land
+            return lc.setClaim(player);
+        } else if (cmd.getName().equalsIgnoreCase("unclaim") && player != null) { // unclaim land
+            return lc.unclaim(player);
+        } else if (cmd.getName().equalsIgnoreCase("selfheal") && player != null) { // self heal this player when on land
+                                                                                   // owned by this player
+            if (lc.getClaim(player)) {
+                double health = player.getHealth();
+                if (health < (player.getHealthScale() / 2)) {
+                    health = player.getHealthScale() / 2;
+                    player.setHealth(health);
+                    getLogger().info(player.getHealth() + " " + player.getHealthScale());
+                    player.sendMessage("You partially healed yourself.");
+                    return true;
+                } else {
+                    player.sendMessage("You already have 50% or more of your health.");
+                }
+            } else {
+                player.sendMessage("You cannot heal yourself when you are not on your land.");
+            }
+        }
         return false;
     }
 

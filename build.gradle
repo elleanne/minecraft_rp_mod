@@ -16,6 +16,14 @@ repositories {
         url "https://hub.spigotmc.org/nexus/content/repositories/snapshots"
     }
 
+    // SkinsRestorer
+    maven { url "https://repo.codemc.org/repository/maven-snapshots/" }
+    maven {
+        metadataSources { artifact() }
+        url "https://repo.inventivetalent.org/content/groups/public/"
+    }
+    maven { url = "https://repo.aikar.co/content/groups/aikar/" }
+
     // Anything else, if needed
     gradlePluginPortal()
 }
@@ -30,6 +38,7 @@ dependencies {
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:29.0-jre'
 
-    // Spigot
+    // Minecraft
     compileOnly "org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT"
+    implementation "net.skinsrestorer:skinsrestorer:14.0.0-SNAPSHOT"
 }

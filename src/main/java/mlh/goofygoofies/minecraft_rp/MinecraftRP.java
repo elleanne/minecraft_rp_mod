@@ -1,5 +1,7 @@
 package mlh.goofygoofies.minecraft_rp;
 
+import net.skinsrestorer.api.SkinsRestorerAPI;
+import net.skinsrestorer.api.PlayerWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -16,14 +18,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MinecraftRP extends JavaPlugin implements Listener {
+    private SkinsRestorerAPI skinsRestorerAPI;
     Map<Integer, String> playersJobsList = new HashMap<>();
     LandClaims lc = new LandClaims(); // TODO: need to make singleton
 
     @Override
     public void onEnable() {
+        // SkinsRestorer
+        getLogger().info("Loading SkinsRestorer API...");
+        skinsRestorerAPI = SkinsRestorerAPI.getApi();
+        getLogger().info(skinsRestorerAPI.toString());
+
         String name = lc.loadLandClaims();
-        super.getLogger().info("MinecraftRP plugin enabled.");
         getServer().getPluginManager().registerEvents(this, this);
+        getLogger().info("MinecraftRP plugin enabled.");
     }
 
     @Override
@@ -66,6 +74,7 @@ public class MinecraftRP extends JavaPlugin implements Listener {
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
         playersJobsList.remove(event.getPlayer().getEntityId());
+        skinsRestorerAPI.removeSkin(event.getPlayer().getName());
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
@@ -144,18 +153,21 @@ public class MinecraftRP extends JavaPlugin implements Listener {
             switch (args[0]) {
             case "Policeman": {
                 Player player = (Player) sender;
+                setSkin(player, "police");
                 playersJobsList.replace(player.getEntityId(), "Policeman");
                 sender.sendMessage("You are now a policeman!");
                 return true;
             }
             case "Doctor": {
                 Player player = (Player) sender;
+                setSkin(player, "doctor");
                 playersJobsList.replace(player.getEntityId(), "Doctor");
                 sender.sendMessage("You are now a doctor!");
                 return true;
             }
             case "Judge": {
                 Player player = (Player) sender;
+                setSkin(player, "judge");
                 playersJobsList.replace(player.getEntityId(), "Judge");
                 sender.sendMessage("You are now a judge!");
                 return true;
@@ -198,4 +210,14 @@ public class MinecraftRP extends JavaPlugin implements Listener {
         return false;
     }
 
+    /**
+     * Sets a player's skin to the skin file specified.
+     * 
+     * @param player Player to override skin for
+     * @param skin Name of the skin (without .skin extension) to set
+     */
+    private void setSkin(Player player, String skin) {
+        skinsRestorerAPI.setSkinName(player.getName(), skin);
+        skinsRestorerAPI.applySkin(new PlayerWrapper(player));
+    }
 }

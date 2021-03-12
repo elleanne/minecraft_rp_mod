@@ -16,4 +16,7 @@ build
 
 # Server files
 /logs
-/plugins
+/plugins/*
+
+# Plugin config
+!/plugins/SkinsRestorer/

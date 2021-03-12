@@ -37,6 +37,7 @@ public class Jobs {
             case "Judge":{
                 //TODO reskin player
                 //TODO TP PLAYER TO THE COURT
+                return true;
             }
 
         }

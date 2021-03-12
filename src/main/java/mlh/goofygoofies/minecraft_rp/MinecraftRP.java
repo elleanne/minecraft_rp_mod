@@ -80,27 +80,27 @@ public class MinecraftRP extends JavaPlugin implements Listener {
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         switch (commandLabel) {
 
-        // Commands for policemen
+        // Commands for guards
 
         case "jail": {
             Player player = (Player) sender;
-            if (playersJobsList.get(player.getEntityId()) != "Policeman") {
+            if (playersJobsList.get(player.getEntityId()) != "Guard") {
                 sender.sendMessage(ChatColor.RED + "You do not have the rights to use this command");
                 return true;
             }
-            Policeman policeman = new Policeman(sender);
-            boolean res = policeman.jail(args);
+            Guard guard = new Guard(sender);
+            boolean res = guard.jail(args);
             return res;
         }
 
         case "inspect": {
             Player player = (Player) sender;
-            if (playersJobsList.get(player.getEntityId()) != "Policeman") {
+            if (playersJobsList.get(player.getEntityId()) != "Guard") {
                 sender.sendMessage(ChatColor.RED + "You do not have the rights to use this command");
                 return true;
             }
-            Policeman policeman = new Policeman(sender);
-            boolean res = policeman.inspect(args);
+            Guard guard = new Guard(sender);
+            boolean res = guard.inspect(args);
             return res;
         }
 
@@ -150,22 +150,22 @@ public class MinecraftRP extends JavaPlugin implements Listener {
             boolean res = jobChanger.jobChange(args);
             if (!res)
                 return false;
-            switch (args[0]) {
-            case "Policeman": {
+            switch (args[0].toLowerCase()) {
+            case "guard": {
                 Player player = (Player) sender;
-                setSkin(player, "police");
-                playersJobsList.replace(player.getEntityId(), "Policeman");
-                sender.sendMessage("You are now a policeman!");
+                setSkin(player, "guard");
+                playersJobsList.replace(player.getEntityId(), "Guard");
+                sender.sendMessage("You are now a guard!");
                 return true;
             }
-            case "Doctor": {
+            case "doctor": {
                 Player player = (Player) sender;
                 setSkin(player, "doctor");
                 playersJobsList.replace(player.getEntityId(), "Doctor");
                 sender.sendMessage("You are now a doctor!");
                 return true;
             }
-            case "Judge": {
+            case "judge": {
                 Player player = (Player) sender;
                 setSkin(player, "judge");
                 playersJobsList.replace(player.getEntityId(), "Judge");
@@ -173,7 +173,7 @@ public class MinecraftRP extends JavaPlugin implements Listener {
                 return true;
             }
             default:
-                sender.sendMessage("Invalid Job Name. Please use Policeman, Judge or Doctor");
+                sender.sendMessage("Invalid Job Name. Please use Guard, Judge or Doctor");
                 return false;
             }
         }

@@ -12,7 +12,7 @@ public class allPlayers extends Jobs{
     public allPlayers(CommandSender sender) {
         super(sender);
     }
-
+ 
     // Sends a message to all nearby players, describing the action that the sender did (args[0]).
     public boolean describeAction(String[] args){
         if (args.length == 0) {

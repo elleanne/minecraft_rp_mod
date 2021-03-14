@@ -29,9 +29,15 @@ public class MinecraftRP extends JavaPlugin implements Listener {
         getLogger().info(skinsRestorerAPI.toString());
 
         // Commands
-        getCommand("inspect").setExecutor(new GuardCommands(playersJobsList));
         getCommand("job").setExecutor(new JobsCommand(playersJobsList));
-        getCommand("jail").setExecutor(new GuardCommands(playersJobsList));
+        GuardCommands gc = new GuardCommands(playersJobsList);
+        getCommand("inspect").setExecutor(gc);
+        getCommand("jail").setExecutor(gc);
+        AllPlayersCommands ac = new AllPlayersCommands();
+        getCommand("me").setExecutor(ac);
+        getCommand("id").setExecutor(ac);
+        getCommand("it").setExecutor(ac);
+        getCommand("roll").setExecutor(ac);
 
         String name = lc.loadLandClaims();
         getServer().getPluginManager().registerEvents(this, this);
@@ -83,32 +89,6 @@ public class MinecraftRP extends JavaPlugin implements Listener {
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         switch (commandLabel) {
-
-        // Commands usable by all players
-
-        case "me": {
-            allPlayers player = new allPlayers(sender);
-            boolean res = player.describeAction(args);
-            return res;
-        }
-
-        case "it": {
-            allPlayers player = new allPlayers(sender);
-            boolean res = player.describeEvent(args);
-            return res;
-        }
-
-        case "roll": {
-            allPlayers player = new allPlayers(sender);
-            boolean res = player.rollDice();
-            return res;
-        }
-
-        case "ID": {
-            allPlayers player = new allPlayers(sender);
-            boolean res = player.showID();
-            return res;
-        }
 
         // Doctor commands
 

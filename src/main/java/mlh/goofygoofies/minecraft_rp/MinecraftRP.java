@@ -29,7 +29,10 @@ public class MinecraftRP extends JavaPlugin implements Listener {
         getLogger().info(skinsRestorerAPI.toString());
 
         // Commands
+        getCommand("inspect").setExecutor(new GuardCommands(playersJobsList));
         getCommand("job").setExecutor(new JobsCommand(playersJobsList));
+        getCommand("jail").setExecutor(new GuardCommands(playersJobsList));
+
         String name = lc.loadLandClaims();
         getServer().getPluginManager().registerEvents(this, this);
         getLogger().info("MinecraftRP plugin enabled.");
@@ -80,30 +83,6 @@ public class MinecraftRP extends JavaPlugin implements Listener {
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         switch (commandLabel) {
-
-        // Commands for guards
-
-        case "jail": {
-            Player player = (Player) sender;
-            if (playersJobsList.get(player.getEntityId()) != "Guard") {
-                sender.sendMessage(ChatColor.RED + "You do not have the rights to use this command");
-                return true;
-            }
-            Guard guard = new Guard(sender);
-            boolean res = guard.jail(args);
-            return res;
-        }
-
-        case "inspect": {
-            Player player = (Player) sender;
-            if (playersJobsList.get(player.getEntityId()) != "Guard") {
-                sender.sendMessage(ChatColor.RED + "You do not have the rights to use this command");
-                return true;
-            }
-            Guard guard = new Guard(sender);
-            boolean res = guard.inspect(args);
-            return res;
-        }
 
         // Commands usable by all players
 

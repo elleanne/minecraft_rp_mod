@@ -21,9 +21,9 @@ public class JobsCommand implements CommandExecutor, TabCompleter {
     /** Map of valid jobs and their attributes */
     private static final HashMap<String, Job> jobs = new HashMap<String, Job>();
     static {
-        jobs.put("doctor", new Job("Doctor", new Location(Bukkit.getServer().getWorlds().get(0), 6997, 86, -5110.561), "doctor"));
-        jobs.put("guard", new Job("Guard", new Location(Bukkit.getServer().getWorlds().get(0), 6887, 99, -4883.720), "guard"));
-        jobs.put("judge", new Job("Judge", null, "judge"));
+        jobs.put("doctor", new Job("doctor", new Location(Bukkit.getServer().getWorlds().get(0), 6997, 86, -5110.561)));
+        jobs.put("guard", new Job("guard", new Location(Bukkit.getServer().getWorlds().get(0), 6887, 99, -4883.720)));
+        jobs.put("judge", new Job("judge", null));
     }
     private static Map<Integer, String> playersJobsList;
     private static final SkinsRestorerAPI skinsRestorerAPI = SkinsRestorerAPI.getApi();;
@@ -55,7 +55,6 @@ public class JobsCommand implements CommandExecutor, TabCompleter {
             player.teleport(job.spawn);
         }
         if (job.skin != null) {
-            sender.sendMessage(skinsRestorerAPI.toString());
             skinsRestorerAPI.setSkinName(player.getName(), job.skin);
             skinsRestorerAPI.applySkin(new PlayerWrapper(player));
         }

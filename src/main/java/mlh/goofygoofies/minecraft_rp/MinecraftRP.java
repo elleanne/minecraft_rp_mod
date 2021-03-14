@@ -3,8 +3,6 @@ package mlh.goofygoofies.minecraft_rp;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
@@ -19,7 +17,7 @@ import java.util.Map;
 public class MinecraftRP extends JavaPlugin implements Listener {
     private SkinsRestorerAPI skinsRestorerAPI;
     Map<Integer, String> playersJobsList = new HashMap<>();
-    LandClaims lc = new LandClaims(); // TODO: need to make singleton
+    final static LandClaims lc = new LandClaims();
 
     @Override
     public void onEnable() {
@@ -39,8 +37,13 @@ public class MinecraftRP extends JavaPlugin implements Listener {
         GuardCommands gc = new GuardCommands(playersJobsList);
         getCommand("inspect").setExecutor(gc);
         getCommand("jail").setExecutor(gc);
-
-        String name = lc.loadLandClaims();
+        
+        // Land claims
+        lc.loadLandClaims();
+        getCommand("claim").setExecutor(lc);
+        getCommand("selfheal").setExecutor(lc);
+        getCommand("unclaim").setExecutor(lc);
+        
         getServer().getPluginManager().registerEvents(this, this);
         getLogger().info("MinecraftRP plugin enabled.");
     }
@@ -86,38 +89,5 @@ public class MinecraftRP extends JavaPlugin implements Listener {
     public void onLeave(PlayerQuitEvent event) {
         playersJobsList.remove(event.getPlayer().getEntityId());
         skinsRestorerAPI.removeSkin(event.getPlayer().getName());
-    }
-
-    public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-        Player player = null;
-        if (sender instanceof Player) {
-            player = (Player) sender;
-        } else {
-            sender.sendMessage("You must be a player!");
-            return false;
-        }
-        
-        if (cmd.getName().equalsIgnoreCase("claim") && player != null) { // claim land
-            return lc.setClaim(player);
-        } else if (cmd.getName().equalsIgnoreCase("unclaim") && player != null) { // unclaim land
-            return lc.unclaim(player);
-        } else if (cmd.getName().equalsIgnoreCase("selfheal") && player != null) { // self heal this player when on land
-                                                                                   // owned by this player
-            if (lc.getClaim(player)) {
-                double health = player.getHealth();
-                if (health < (player.getHealthScale() / 2)) {
-                    health = player.getHealthScale() / 2;
-                    player.setHealth(health);
-                    getLogger().info(player.getHealth() + " " + player.getHealthScale());
-                    player.sendMessage("You partially healed yourself.");
-                    return true;
-                } else {
-                    player.sendMessage("You already have 50% or more of your health.");
-                }
-            } else {
-                player.sendMessage("You cannot heal yourself when you are not on your land.");
-            }
-        }
-        return false;
     }
 }

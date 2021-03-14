@@ -6,14 +6,17 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.System.Logger;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
 
-public class LandClaims {
+public class LandClaims implements CommandExecutor, TabCompleter {
 
     // X_START, Y_START are the coordinates to start eligible land that can be owned at.
     // TODO: Need to make function for admin to change this?
@@ -151,5 +154,45 @@ public class LandClaims {
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        Player player = null;
+        if (sender instanceof Player) {
+            player = (Player) sender;
+        } else {
+            sender.sendMessage("You must be a player!");
+            return false;
+        }
+        
+        if (cmd.getName().equalsIgnoreCase("claim") && player != null) { // claim land
+            return setClaim(player);
+        } else if (cmd.getName().equalsIgnoreCase("unclaim") && player != null) { // unclaim land
+            return unclaim(player);
+        } else if (cmd.getName().equalsIgnoreCase("selfheal") && player != null) { // self heal this player when on land
+                                                                                   // owned by this player
+            if (getClaim(player)) {
+                double health = player.getHealth();
+                if (health < (player.getHealthScale() / 2)) {
+                    health = player.getHealthScale() / 2;
+                    player.setHealth(health);
+                    Bukkit.getLogger().info(player.getHealth() + " " + player.getHealthScale());
+                    player.sendMessage("You partially healed yourself.");
+                    return true;
+                } else {
+                    player.sendMessage("You already have 50% or more of your health.");
+                }
+            } else {
+                player.sendMessage("You cannot heal yourself when you are not on your land.");
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        // None of these commands take arguments so far
+        return new ArrayList<String>();
     }
 }

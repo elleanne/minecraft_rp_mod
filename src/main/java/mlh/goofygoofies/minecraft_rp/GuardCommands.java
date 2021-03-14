@@ -1,8 +1,12 @@
 package mlh.goofygoofies.minecraft_rp;
 
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -29,15 +33,16 @@ class jailed_player_waiter implements Runnable {
     }
 }
 
-public class Guard extends Jobs{
+public class GuardCommands implements CommandExecutor {
     Location JAIL_LOCATION = new Location(Bukkit.getServer().getWorlds().get(0), 6818, 81, -5010.538);
-    String [] illegalItemsList;
+    static String [] illegalItemsList = new String[]{
+        "SWORD", "BOW", "ARROW", "TNT", "DIAMOND"
+    };
+    public CommandSender sender;
+    private static Map<Integer, String> playersJobsList;
 
-    public Guard(CommandSender sender){
-        super(sender);
-        illegalItemsList = new String[]{
-                "SWORD", "BOW", "ARROW", "TNT", "DIAMOND"
-        };
+    public GuardCommands(Map<Integer, String> playersJobsList) {
+        GuardCommands.playersJobsList = playersJobsList;
     }
 
     public boolean jail(String[] args){
@@ -72,7 +77,7 @@ public class Guard extends Jobs{
                     return true;}
             }
 
-            jailed_player.sendMessage(ChatColor.RED + "You have been jailed for " + (time/60000) + "minutes");
+            jailed_player.sendMessage(ChatColor.RED + "You have been jailed for " + (time/60000) + " minutes");
             jailed_player_waiter jailed_player_waiting = new jailed_player_waiter(jailed_player, time);
             jailed_player_waiting.run();
             return true;
@@ -118,6 +123,32 @@ public class Guard extends Jobs{
             if (!illegalItemsFound) sender.sendMessage(ChatColor.GREEN + "No illegal items found!");
             return true;
         }
+        return false;
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        this.sender = sender;
+        // Doesn't work for ConsoleCommandSender/BlockCommandSender
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("This command only supports being run by a player");
+            return true;
+        }
+
+        // Check job
+        Player player = (Player) sender;
+        if (playersJobsList.get(player.getEntityId()) != "guard") {
+            sender.sendMessage(ChatColor.RED + "You do not have the rights to use this command");
+            return true;
+        }
+
+        switch (label.toLowerCase()) {
+            case "jail":
+                return jail(args);
+            case "inspect":
+                return inspect(args);
+        }
+
         return false;
     }
 

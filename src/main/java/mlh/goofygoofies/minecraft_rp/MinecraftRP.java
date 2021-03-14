@@ -1,7 +1,6 @@
 package mlh.goofygoofies.minecraft_rp;
 
 import net.skinsrestorer.api.SkinsRestorerAPI;
-import net.skinsrestorer.api.PlayerWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -29,6 +28,8 @@ public class MinecraftRP extends JavaPlugin implements Listener {
         skinsRestorerAPI = SkinsRestorerAPI.getApi();
         getLogger().info(skinsRestorerAPI.toString());
 
+        // Commands
+        getCommand("job").setExecutor(new JobsCommand(playersJobsList));
         String name = lc.loadLandClaims();
         getServer().getPluginManager().registerEvents(this, this);
         getLogger().info("MinecraftRP plugin enabled.");
@@ -142,41 +143,6 @@ public class MinecraftRP extends JavaPlugin implements Listener {
             boolean res = doc.heal(args);
             return res;
         }
-
-        // Command to change your job
-
-        case "job": {
-            Jobs jobChanger = new Jobs(sender);
-            boolean res = jobChanger.jobChange(args);
-            if (!res)
-                return false;
-            switch (args[0].toLowerCase()) {
-            case "guard": {
-                Player player = (Player) sender;
-                setSkin(player, "guard");
-                playersJobsList.replace(player.getEntityId(), "Guard");
-                sender.sendMessage("You are now a guard!");
-                return true;
-            }
-            case "doctor": {
-                Player player = (Player) sender;
-                setSkin(player, "doctor");
-                playersJobsList.replace(player.getEntityId(), "Doctor");
-                sender.sendMessage("You are now a doctor!");
-                return true;
-            }
-            case "judge": {
-                Player player = (Player) sender;
-                setSkin(player, "judge");
-                playersJobsList.replace(player.getEntityId(), "Judge");
-                sender.sendMessage("You are now a judge!");
-                return true;
-            }
-            default:
-                sender.sendMessage("Invalid Job Name. Please use Guard, Judge or Doctor");
-                return false;
-            }
-        }
         }
         Player player = null;
         if (sender instanceof Player) {
@@ -208,16 +174,5 @@ public class MinecraftRP extends JavaPlugin implements Listener {
             }
         }
         return false;
-    }
-
-    /**
-     * Sets a player's skin to the skin file specified.
-     * 
-     * @param player Player to override skin for
-     * @param skin Name of the skin (without .skin extension) to set
-     */
-    private void setSkin(Player player, String skin) {
-        skinsRestorerAPI.setSkinName(player.getName(), skin);
-        skinsRestorerAPI.applySkin(new PlayerWrapper(player));
     }
 }

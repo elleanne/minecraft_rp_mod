@@ -30,14 +30,15 @@ public class MinecraftRP extends JavaPlugin implements Listener {
 
         // Commands
         getCommand("job").setExecutor(new JobsCommand(playersJobsList));
-        GuardCommands gc = new GuardCommands(playersJobsList);
-        getCommand("inspect").setExecutor(gc);
-        getCommand("jail").setExecutor(gc);
+        getCommand("heal").setExecutor(new DoctorCommands(playersJobsList));
         AllPlayersCommands ac = new AllPlayersCommands();
         getCommand("me").setExecutor(ac);
         getCommand("id").setExecutor(ac);
         getCommand("it").setExecutor(ac);
         getCommand("roll").setExecutor(ac);
+        GuardCommands gc = new GuardCommands(playersJobsList);
+        getCommand("inspect").setExecutor(gc);
+        getCommand("jail").setExecutor(gc);
 
         String name = lc.loadLandClaims();
         getServer().getPluginManager().registerEvents(this, this);
@@ -88,21 +89,6 @@ public class MinecraftRP extends JavaPlugin implements Listener {
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-        switch (commandLabel) {
-
-        // Doctor commands
-
-        case "heal": {
-            Player player = (Player) sender;
-            if (playersJobsList.get(player.getEntityId()) != "Doctor") {
-                sender.sendMessage(ChatColor.RED + "You do not have the rights to use this command");
-                return true;
-            }
-            Doctor doc = new Doctor(sender);
-            boolean res = doc.heal(args);
-            return res;
-        }
-        }
         Player player = null;
         if (sender instanceof Player) {
             player = (Player) sender;

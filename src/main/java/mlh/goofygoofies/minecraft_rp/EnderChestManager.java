@@ -1,5 +1,8 @@
 package mlh.goofygoofies.minecraft_rp;
 
+import java.util.Iterator;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -8,8 +11,24 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 
-public class EnderChestListener implements Listener {
+public class EnderChestManager implements Listener {
+    /**
+     * Disallows crafting ender chests upon construction.
+     * As an event listener, this class disallows placing items in an ender chest that aren't gold nuggets/ingots/blocks.
+     */
+    public EnderChestManager() {
+        Iterator<Recipe> it = Bukkit.recipeIterator();
+        Recipe recipe;
+        while (it.hasNext()) {
+            recipe = it.next();
+            if (recipe.getResult().getType() == Material.ENDER_CHEST) {
+                it.remove();
+            }
+        }
+    }
+
     /**
      * Disallows placing items in an ender chest that aren't gold nuggets/ingots/blocks. Removing non-gold items from an ender chest is still allowed.
      * @param event Event when the player clicks inside an inventory view

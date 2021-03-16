@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -43,7 +44,12 @@ public class MinecraftRP extends JavaPlugin implements Listener {
         getCommand("claim").setExecutor(lc);
         getCommand("selfheal").setExecutor(lc);
         getCommand("unclaim").setExecutor(lc);
-        
+        getCommand("check_land").setExecutor(lc);
+        getCommand("transfer_land").setExecutor(lc);
+
+        Market m = new Market();
+        getCommand("transfer_money").setExecutor(m);
+
         getServer().getPluginManager().registerEvents(this, this);
         getLogger().info("MinecraftRP plugin enabled.");
     }
@@ -89,5 +95,18 @@ public class MinecraftRP extends JavaPlugin implements Listener {
     public void onLeave(PlayerQuitEvent event) {
         playersJobsList.remove(event.getPlayer().getEntityId());
         skinsRestorerAPI.removeSkin(event.getPlayer().getName());
+    }
+
+    @EventHandler
+    public void onAttack(EntityDamageByEntityEvent event) {
+        if (((event.getDamager() instanceof Player)) && ((event.getEntity() instanceof Player)))
+        {
+            //Player damager = (Player)event.getDamager();
+            Player victim = (Player)event.getEntity();
+            if(lc.getClaim(victim)) {
+                victim.setNoDamageTicks(10);
+            }
+            //damager.sendMessage("test");
+        }
     }
 }

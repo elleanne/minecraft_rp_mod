@@ -50,4 +50,15 @@ commands:
   job:
     usage: /job <Job Name (Policeman, Doctor, or Judge)>
     description: Changes the player's job.
+
+  transfer_money:
+    usage: /transfer_money <Player Name> <Integer Amount>
+    description: transfer some amount of money to another player
+
+  check_land:
+    description: for a player to check the land they own
+
+  transfer_land:
+    usage: /transfer_land <Player Name> <{List Coordinates}> <Integer Amount>
+
 # permissions:

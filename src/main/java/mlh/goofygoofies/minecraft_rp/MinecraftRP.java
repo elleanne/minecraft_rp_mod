@@ -47,7 +47,7 @@ public class MinecraftRP extends JavaPlugin implements Listener {
         
         // Events
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new EnderChestListener(), this);
+        pm.registerEvents(new EnderChestManager(), this);
         pm.registerEvents(this, this);
         getLogger().info("MinecraftRP plugin enabled.");
     }

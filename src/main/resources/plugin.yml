@@ -61,4 +61,22 @@ commands:
   transfer_land:
     usage: /transfer_land <Player Name> <{List Coordinates}> <Integer Amount>
 
+  transfer_itemFor$:
+    usage: /transfer_itemFor$ <Player Name> <Material Item> <Integer Amount of Item> <Integer Amount of Gold>
+
+  addShopItem:
+    usage: /addShopItem <Material Item>  <Integer Amount of Item> <Integer Cost>
+
+  removeShopItem:
+    usage: /removeShopItem <Material Item>  <Integer Amount of Item> <Integer Cost>
+
+  checkForItemToBuy:
+    usage: /checkForItemToBuy <Material Item>
+
+  checkMarketItems:
+    description: check market for all items for sale
+
+  sendMessageToSeller:
+    usage: /sendMessageToSeller <Player sellerName> <Material item> <Integer amountOfItem>
+
 # permissions:

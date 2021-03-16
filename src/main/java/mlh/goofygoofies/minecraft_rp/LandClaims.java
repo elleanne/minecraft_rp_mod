@@ -27,7 +27,7 @@ public class LandClaims implements CommandExecutor, TabCompleter {
      * Read land claims from .csv file when server is launched
      * @return
      */
-    public String loadLandClaims() {
+    public String loadLandClaims() throws IOException {
         String name = "";
         BufferedReader bReader;
         try {
@@ -40,15 +40,15 @@ public class LandClaims implements CommandExecutor, TabCompleter {
                     String[] sepData = data[j].split(":");
                     int l = Integer.parseInt(sepData[0]);
                     int m = Integer.parseInt(sepData[1]);
-                    landClaims[l][m] = sepData[2].toString();
-                    name = sepData[2].toString();
+                    landClaims[l][m] = sepData[2];
+                    name = sepData[2];
                 }
             }
             bReader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException io) {
+            io.printStackTrace();
         }
         return name;
     }
@@ -66,7 +66,7 @@ public class LandClaims implements CommandExecutor, TabCompleter {
             for (int i = 0; i < landClaims.length; i++) {
                 for (int j = 0; j < landClaims[i].length; j++) {
                     if (landClaims[i][j] != null) {
-                        sb.append(i + ":" + j + ":" + landClaims[i][j]);
+                        sb.append(i).append(":").append(j).append(":").append(landClaims[i][j]);
                         sb.append(",");
                     }
                 }
@@ -114,9 +114,9 @@ public class LandClaims implements CommandExecutor, TabCompleter {
             }
             for (int i = -1; i < 2; i++) { // if any of the 9 blocks are free, and some are only claimed by this player,
                 // set all blocks to claimed and set value to player's name
-                int l = (int) xCoor + i;
+                int l =  xCoor + i;
                 for (int j = -1; j < 2; j++) {
-                    int m = (int) yCoor + j;
+                    int m = yCoor + j;
                     landClaims[l][m] = p.getPlayerListName();
                 }
             }
@@ -186,7 +186,7 @@ public class LandClaims implements CommandExecutor, TabCompleter {
                 // set all blocks to claimed and add to player's
                 int l = (int) xCoor + i;
                 for (int j = -1; j < 2; j++) {
-                    int m = (int) yCoor + j;
+                    int m = yCoor + j;
                     if (landClaims[l][m].compareTo(p.getPlayerListName()) == 0) {
                         landClaims[l][m] = null;
                     }
@@ -224,7 +224,7 @@ public class LandClaims implements CommandExecutor, TabCompleter {
         player.sendMessage("looking for your land...");
         String name = player.getPlayerListName();
 
-        HashMap<Integer, ArrayList<Integer>> playerLand = new HashMap();
+        HashMap<Integer, ArrayList<Integer>> playerLand = new HashMap<>();
         for (int i = 0; i < landClaims.length; i++) {
             for (int j = 0; j < landClaims[i].length; j++) {
 
@@ -350,8 +350,7 @@ public class LandClaims implements CommandExecutor, TabCompleter {
                 }
             }
         }
-        if (amount == 0) return true;
-        return false;
+        return amount == 0;
     }
 
     /**
@@ -365,7 +364,7 @@ public class LandClaims implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        Player player = null; // check that sender is a player
+        Player player; // check that sender is a player
         if (sender instanceof Player) {
             player = (Player) sender;
         } else {
@@ -373,18 +372,18 @@ public class LandClaims implements CommandExecutor, TabCompleter {
             return false;
         }
 
-        if (cmd.getName().equalsIgnoreCase("claim") && player != null) { // claim land
+        if (cmd.getName().equalsIgnoreCase("claim") ) { // claim land
             return setClaim(player);
-        } else if (cmd.getName().equalsIgnoreCase("unclaim") && player != null) { // unclaim land
+        } else if (cmd.getName().equalsIgnoreCase("unclaim") ) { // unclaim land
             return unclaim(player);
-        } else if (cmd.getName().equalsIgnoreCase("selfheal") && player != null) { // self heal this player when on land
+        } else if (cmd.getName().equalsIgnoreCase("selfheal") ) { // self heal this player when on land
             // owned by this player
             if (getClaim(player)) {
                 return resetHealth(player);
             } else {
                 player.sendMessage("You cannot heal yourself when you are not on your land.");
             }
-        } else if (cmd.getName().equalsIgnoreCase("transfer_land") && player != null) {
+        } else if (cmd.getName().equalsIgnoreCase("transfer_land") ) {
             if (args.length <= 0) {
                 player.sendMessage("Please use command with the name player to send and a list of the land to transfer inside of '{LIST}'");
             } else if (args.length == 3) {
@@ -398,7 +397,7 @@ public class LandClaims implements CommandExecutor, TabCompleter {
             } else {
                 player.sendMessage("Wrong format! You need 3 arguments to use this command");
             }
-        } else if (cmd.getName().equalsIgnoreCase("check_land") && player != null) {
+        } else if (cmd.getName().equalsIgnoreCase("check_land") ) {
             return checkLand(player);
         }
 
@@ -408,6 +407,6 @@ public class LandClaims implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         // None of these commands take arguments so far
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 }

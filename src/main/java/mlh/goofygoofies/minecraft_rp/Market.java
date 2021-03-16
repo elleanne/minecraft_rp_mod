@@ -17,7 +17,7 @@ public class Market implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
-        Player player = null; // check that sender is a player
+        Player player ; // check that sender is a player
         if (sender instanceof Player) {
             player = (Player) sender;
         } else {
@@ -25,7 +25,7 @@ public class Market implements CommandExecutor, TabCompleter {
             return false;
         }
 
-        if (cmd.getName().equalsIgnoreCase("transfer_money") && player != null) { // claim land
+        if (cmd.getName().equalsIgnoreCase("transfer_money") ) { // claim land
             if (args.length >= 2) {
                 Player reciever = Bukkit.getPlayerExact(args[0]); // check that reciever is a valid player
                 if (reciever != null) {
@@ -33,8 +33,71 @@ public class Market implements CommandExecutor, TabCompleter {
                 }
                 return true;
             }
+        } else if(cmd.getName().equalsIgnoreCase("transfer_itemFor$") ) {
+            if (args.length >= 4) {
+                Player receiver = Bukkit.getPlayerExact(args[0]); // check that receiver is a valid player
+                if (receiver != null && player != receiver) {
+                    tradeItemForGold(player, receiver, args[1], args[2], args[3]);
+                    return true;
+                } else {
+                    player.sendMessage("invalid buyer name");
+                    return false;
+                }
+            } else {
+                player.sendMessage("Invalid number of arguments. Should be: </transfer_itemFor$> <buyer> <item to transfer> <amount of item> <amount of gold> ");
+                return false;
+            }
+
         }
         return false;
+    }
+
+    @Nullable
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+        return null;
+    }
+
+    /**
+     * sender is seller, receiver is buyer
+     * @param sender
+     * @param reciever
+     * @param item
+     * @param itemAmount
+     * @param goldAmount
+     */
+    public void tradeItemForGold(Player sender, Player reciever, String item, String itemAmount, String goldAmount) {
+        int intItemAmount ;
+        int intGoldAmount ;
+        try {
+            intItemAmount = Integer.parseInt(itemAmount);
+            intGoldAmount = Integer.parseInt(goldAmount);
+        } catch (NumberFormatException e) {
+            sender.sendMessage("invalid amount of gold or item to transfer");
+            return;
+        }
+
+        item = item.toUpperCase(); // sender is seller, receiver is buyer
+        Material itemToTrade = Material.getMaterial(item);
+        if (itemToTrade == null) {
+            sender.sendMessage("Invalid input item type. Did not send to " + reciever.getDisplayName() + ".");
+            return;
+        }
+        ItemStack[] senderInv = sender.getInventory().getContents();
+
+        // check that the sender has the items and the buyer has the money
+        if(checkInventory(senderInv, intItemAmount, itemToTrade)) {
+            String hasGold = checkPlayerGold(reciever, intGoldAmount);
+            if (hasGold != null ) {
+                if(intGoldAmount == 0) { // if giving for free, only transfer the item
+                    transferItem(sender, reciever, senderInv, itemToTrade, intItemAmount);
+                } else {
+                    transferItem(sender, reciever, senderInv, itemToTrade, intItemAmount);
+                    transferMoney(sender, reciever, goldAmount);
+                }
+                sender.sendMessage("Don't forget to remove your item from the market if you had it on sale there!");
+            }
+        }
     }
 
     /**
@@ -45,7 +108,7 @@ public class Market implements CommandExecutor, TabCompleter {
      * @param amountToTransfer
      */
     private void transferMoney(Player sender, Player reciever, String amountToTransfer) {
-        int amount = 0;
+        int amount ;
         try {
             amount = Integer.parseInt(amountToTransfer);
         } catch (NumberFormatException e) {
@@ -99,11 +162,50 @@ public class Market implements CommandExecutor, TabCompleter {
         reciever.sendMessage(sender.getDisplayName() + " sent you " + amountTemp + " gold.");
     }
 
+    public void transferItem(Player sender, Player receiver, ItemStack[] senderInv, Material item, int amount) {
+        // sender is seller, receiver is buyer
+        ItemStack thisItem = new ItemStack(item, amount); // send buyer the item
+        receiver.getInventory().addItem(thisItem);
 
-    @Nullable
-    @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        return null;
+            for (ItemStack is : senderInv) {
+                if (is != null && amount > 0) {
+                    if (is.getType() == item) {
+                        int itemQuant = is.getAmount();
+                        if (itemQuant >= amount) {
+                            is.setAmount(itemQuant - amount);
+                            amount = 0;
+                        } else {
+                            is.setAmount(0);
+                            amount -= itemQuant;
+                        }
+                    }
+                }
+            }
+    }
+
+    /**
+     * Check if a player's inventory has an item in it
+     * @param inventory
+     * @param amount
+     * @param item
+     * @return
+     */
+    public boolean checkInventory(ItemStack[] inventory, int amount, Material item) {
+        int count = 0;
+        for (ItemStack is : inventory) {
+            if(is != null && amount > count) {
+                if( is.getType() == item ) {
+                    int itemQuant = is.getAmount();
+                    if (itemQuant >= amount) {
+                        return true;
+                    } else {
+                        count += itemQuant;
+                    }
+                }
+            }
+        }
+        if(count >= amount) return true;
+        return false;
     }
 
     /**
@@ -115,7 +217,7 @@ public class Market implements CommandExecutor, TabCompleter {
     public static String checkPlayerGold(Player p, int amountOfGold) {
         if (amountOfGold == 0) return "0";
         ItemStack[] stack = p.getInventory().getContents();
-        if (stack == null || stack.length == 0) return null;
+        if ( stack.length == 0 ) return null;
         int countOfGold = 0;
         for (int i = 0; i < stack.length; i++) {
             if (stack[i] != null) {

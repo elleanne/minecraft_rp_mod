@@ -12,8 +12,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.entity.Player;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class MinecraftRP extends JavaPlugin implements Listener {
     private SkinsRestorerAPI skinsRestorerAPI;
@@ -27,28 +29,44 @@ public class MinecraftRP extends JavaPlugin implements Listener {
         skinsRestorerAPI = SkinsRestorerAPI.getApi();
         getLogger().info(skinsRestorerAPI.toString());
 
-        // Commands
-        getCommand("job").setExecutor(new JobsCommand(playersJobsList));
-        getCommand("heal").setExecutor(new DoctorCommands(playersJobsList));
-        AllPlayersCommands ac = new AllPlayersCommands();
-        getCommand("me").setExecutor(ac);
-        getCommand("id").setExecutor(ac);
-        getCommand("it").setExecutor(ac);
-        getCommand("roll").setExecutor(ac);
-        GuardCommands gc = new GuardCommands(playersJobsList);
-        getCommand("inspect").setExecutor(gc);
-        getCommand("jail").setExecutor(gc);
-        
-        // Land claims
-        lc.loadLandClaims();
-        getCommand("claim").setExecutor(lc);
-        getCommand("selfheal").setExecutor(lc);
-        getCommand("unclaim").setExecutor(lc);
-        getCommand("check_land").setExecutor(lc);
-        getCommand("transfer_land").setExecutor(lc);
+            // Commands
+            Objects.requireNonNull(getCommand("job")).setExecutor(new JobsCommand(playersJobsList));
+            Objects.requireNonNull(getCommand("heal")).setExecutor(new DoctorCommands(playersJobsList));
 
-        Market m = new Market();
-        getCommand("transfer_money").setExecutor(m);
+            AllPlayersCommands ac = new AllPlayersCommands();
+            Objects.requireNonNull(getCommand("me")).setExecutor(ac);
+            Objects.requireNonNull(getCommand("id")).setExecutor(ac);
+            Objects.requireNonNull(getCommand("it")).setExecutor(ac);
+            Objects.requireNonNull(getCommand("roll")).setExecutor(ac);
+
+            GuardCommands gc = new GuardCommands(playersJobsList);
+            Objects.requireNonNull(getCommand("inspect")).setExecutor(gc);
+            Objects.requireNonNull(getCommand("jail")).setExecutor(gc);
+
+            // Land claims
+
+        try {
+            lc.loadLandClaims();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        getCommand("claim").setExecutor(lc);
+            getCommand("selfheal").setExecutor(lc);
+            getCommand("unclaim").setExecutor(lc);
+            getCommand("check_land").setExecutor(lc);
+            getCommand("transfer_land").setExecutor(lc);
+
+            Market m = new Market();
+            Objects.requireNonNull(getCommand("transfer_money")).setExecutor(m);
+            Objects.requireNonNull(getCommand("transfer_itemFor$")).setExecutor(m);
+
+        MarketShop mS = new MarketShop();
+            Objects.requireNonNull(getCommand("addShopItem")).setExecutor(mS);
+            Objects.requireNonNull(getCommand("removeShopItem")).setExecutor(mS);
+            Objects.requireNonNull(getCommand("checkForItemToBuy")).setExecutor(mS);
+            Objects.requireNonNull(getCommand("checkMarketItems")).setExecutor(mS);
+            Objects.requireNonNull(getCommand("sendMessageToSeller")).setExecutor(mS);
+
 
         getServer().getPluginManager().registerEvents(this, this);
         getLogger().info("MinecraftRP plugin enabled.");
@@ -80,7 +98,6 @@ public class MinecraftRP extends JavaPlugin implements Listener {
                     player.setHealth(player.getHealth() + 0.5);
             }
         }, 140L);
-        return;
     }
 
     /* Assign default job 'Citizen' to all new players */

@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.entity.Player;
 
@@ -44,7 +45,10 @@ public class MinecraftRP extends JavaPlugin implements Listener {
         getCommand("selfheal").setExecutor(lc);
         getCommand("unclaim").setExecutor(lc);
         
-        getServer().getPluginManager().registerEvents(this, this);
+        // Events
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new EnderChestListener(), this);
+        pm.registerEvents(this, this);
         getLogger().info("MinecraftRP plugin enabled.");
     }
 

@@ -31,7 +31,6 @@ class jailed_player_waiter implements Runnable {
         jailed_player.teleport(OUT_OF_JAIL_LOCATION);
 
     }
-
 }
 
 public class GuardCommands implements CommandExecutor {

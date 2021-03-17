@@ -3,10 +3,12 @@ package mlh.goofygoofies.minecraft_rp;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+
 import org.bukkit.entity.Player;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -17,9 +19,15 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.awt.*;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.ChatColor;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 
 import static org.bukkit.Bukkit.getServer;
 
@@ -30,9 +38,6 @@ public class AllPlayersCommands implements CommandExecutor, TabCompleter, Listen
     Location BANK_LOCATION = new Location(getServer().getWorlds().get(0), 7000, 86, -5110);
 
     static Plugin plugin;
-
-
-
 
     // Sends a message to all nearby players, describing the action that the sender did (args[0]).
     public boolean describeAction(String[] args){
@@ -57,6 +62,7 @@ public class AllPlayersCommands implements CommandExecutor, TabCompleter, Listen
         }
         int distance = 50 * 50;
         String eventDescription = String.join(" ", args);
+
         for (Player p : getServer().getOnlinePlayers()) {
             Player senderPlayer = (Player) sender;
             if (p.getWorld() ==  senderPlayer.getWorld() && p.getLocation().distanceSquared(senderPlayer.getLocation()) <= distance) {
@@ -71,7 +77,7 @@ public class AllPlayersCommands implements CommandExecutor, TabCompleter, Listen
         Random r = new Random();
         int result = r.nextInt(101);
         int distance = 50 * 50;
-        for (Player p : getServer().getOnlinePlayers()) {
+        for (Player p : Bukkit.getServer().getOnlinePlayers()) {
             Player senderPlayer = (Player) sender;
             if (p.getWorld() ==  senderPlayer.getWorld() && p.getLocation().distanceSquared(senderPlayer.getLocation()) <= distance) {
                 p.sendMessage(ChatColor.GRAY + sender.getName() + " rolled the dice and obtained a " + result);
@@ -82,7 +88,8 @@ public class AllPlayersCommands implements CommandExecutor, TabCompleter, Listen
 
     public boolean showID(){
         int distance = 50 * 50;
-        for (Player p : getServer().getOnlinePlayers()) {
+
+        for (Player p : Bukkit.getServer().getOnlinePlayers()) {
             Player senderPlayer = (Player) sender;
             if (p.getWorld() ==  senderPlayer.getWorld() && p.getLocation().distanceSquared(senderPlayer.getLocation()) <= distance) {
                 p.sendMessage(ChatColor.GREEN + "ID indicates: \n Name: " + sender.getName());
@@ -166,7 +173,6 @@ public class AllPlayersCommands implements CommandExecutor, TabCompleter, Listen
                 return showID();
             case "rob":
                 return rob();
-
         }
 
         return false;

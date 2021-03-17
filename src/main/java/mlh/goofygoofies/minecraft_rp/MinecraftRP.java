@@ -10,6 +10,7 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.entity.Player;
 
@@ -39,12 +40,14 @@ public class MinecraftRP extends JavaPlugin implements Listener {
         getCommand("job").setExecutor(new JobsCommand(playersJobsList));
         getCommand("heal").setExecutor(new DoctorCommands(playersJobsList));
 
+  
         AllPlayersCommands ac = new AllPlayersCommands();
         getCommand("me").setExecutor(ac);
         getCommand("id").setExecutor(ac);
         getCommand("it").setExecutor(ac);
         getCommand("roll").setExecutor(ac);
         getCommand("rob").setExecutor(ac);
+
 
         GuardCommands gc = new GuardCommands(playersJobsList);
         getCommand("inspect").setExecutor(gc);
@@ -56,7 +59,9 @@ public class MinecraftRP extends JavaPlugin implements Listener {
         getCommand("selfheal").setExecutor(lc);
         getCommand("unclaim").setExecutor(lc);
         
-        getServer().getPluginManager().registerEvents(this, this);
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new EnderChestManager(), this);
+        pm.registerEvents(this, this);
         getLogger().info("MinecraftRP plugin enabled.");
     }
 

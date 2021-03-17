@@ -79,4 +79,11 @@ commands:
   sendMessageToSeller:
     usage: /sendMessageToSeller <Player sellerName> <Material item> <Integer amountOfItem>
 
+  shop:
+    description: open shop
+
+  addGoldToPurse:
+    usage: /addGoldToPurse <Integer amountToTransfer>
+    description: add money to spend in the market
+
 # permissions:

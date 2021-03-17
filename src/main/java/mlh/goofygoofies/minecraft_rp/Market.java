@@ -15,6 +15,8 @@ import java.util.List;
 
 public class Market implements CommandExecutor, TabCompleter {
 
+    MinecraftRP plugin = MinecraftRP.getInstance();
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
         Player player ; // check that sender is a player
@@ -47,7 +49,17 @@ public class Market implements CommandExecutor, TabCompleter {
                 player.sendMessage("Invalid number of arguments. Should be: </transfer_itemFor$> <buyer> <item to transfer> <amount of item> <amount of gold> ");
                 return false;
             }
-
+        } else if (cmd.getName().equalsIgnoreCase("addGoldToPurse")) {
+            if(args.length == 1) {
+                try {
+                    int amount = Integer.parseInt(args[0]);
+                    if(checkPlayerGold(player, amount) != null) {
+                        addGoldToPurse(player, amount);
+                        removePlayerGold(player, amount);
+                        return true;
+                    }
+                } catch(NumberFormatException e) {return true;}
+            }
         }
         return false;
     }
@@ -56,6 +68,10 @@ public class Market implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         return null;
+    }
+
+    public void addGoldToPurse(Player player, int amount) {
+        plugin.goldData.put(player.getUniqueId(), amount);
     }
 
     /**
@@ -238,5 +254,39 @@ public class Market implements CommandExecutor, TabCompleter {
             if (countOfGold >= amountOfGold) return "both";
         }
         return null;
+    }
+
+    public void removePlayerGold(Player p, int amountOfGold) {
+
+        if (amountOfGold < 1) return;
+        int amountTemp = amountOfGold; // save copy of amount to use after amount is decremented
+
+        ItemStack[] sItems = p.getInventory().getContents(); // items only in inventory bar
+        // search inventory bar for gold ingots and blocks
+        for (ItemStack is : sItems) {
+            if (amountOfGold > 0) { // only enter if amount has not been decremented to 0
+                if (is != null) {
+                    if ( is.getType() == Material.GOLD_INGOT ) {
+                        int count = is.getAmount();
+                        if (count > amountOfGold) {
+                            is.setAmount(count - amountOfGold);
+                            amountOfGold = 0;
+                        } else {
+                            is.setAmount(0);
+                            amountOfGold -= count;
+                        }
+                    } else if (is.getType() == Material.GOLD_BLOCK) {
+                        int count = is.getAmount() * 4; // blocks are worth 4 gold ingots
+                        if (count > amountOfGold) {
+                            is.setAmount(count - amountOfGold);
+                            amountOfGold = 0;
+                        } else {
+                            is.setAmount(0);
+                            amountOfGold -= count;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

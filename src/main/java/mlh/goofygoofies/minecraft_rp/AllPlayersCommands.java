@@ -127,11 +127,10 @@ public class AllPlayersCommands implements CommandExecutor, TabCompleter, Listen
                 }
                 else{
                         sender.sendMessage("You successfully robbed the bank!");
-                        //Gives 64 gold_ingots to players
-                        ItemStack[] gold_ingot = {new ItemStack(Material.BREAD), new ItemStack(Material.GOLD_INGOT)};
-                        for(int i=1;i<64;i++) {
-                            robber.getInventory().addItem(gold_ingot);
-                        }
+                        //Gives 64 gold ingots to players
+                        ItemStack[] gold_ingot_stack = {new ItemStack(Material.GOLD_INGOT, 64)};
+                        robber.getInventory().addItem(gold_ingot_stack);
+
                         Bukkit.broadcastMessage(ChatColor.RED + "THE BANK HAS BEEN ROBBED!");
                         robber = null;
                         int old_robbing_task_id = robbing_task_id;

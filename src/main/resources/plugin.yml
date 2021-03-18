@@ -43,6 +43,9 @@ commands:
     usage: /ID shows you ID card to players near you.
     description: Show your ID card to players near you (first and last name).
 
+  rob:
+    usage: /rob
+    description: Starts robbing the bank.
   heal:
     usage: /heal <Player Name>
     description: Completely heals a player.

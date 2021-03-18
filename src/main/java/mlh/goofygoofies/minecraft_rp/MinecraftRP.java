@@ -4,12 +4,15 @@ import net.skinsrestorer.api.SkinsRestorerAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -17,19 +20,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static org.bukkit.Bukkit.getServer;
+
 public class MinecraftRP extends JavaPlugin implements Listener {
     private SkinsRestorerAPI skinsRestorerAPI;
     Map<Integer, String> playersJobsList = new HashMap<>();
     final static LandClaims lc = new LandClaims();
+    Location BANK_LOCATION;
 
     @Override
     public void onEnable() {
+        BANK_LOCATION = new Location(getServer().getWorlds().get(0), 7000, 86, -5110);
         // SkinsRestorer
         getLogger().info("Loading SkinsRestorer API...");
         skinsRestorerAPI = SkinsRestorerAPI.getApi();
         getLogger().info(skinsRestorerAPI.toString());
 
+        //gives AllPLayers class the plugin's object (used for multi-threading)
+        AllPlayersCommands.plugin = this;
+
         // Commands
+
         Objects.requireNonNull(getCommand("job")).setExecutor(new JobsCommand(playersJobsList));
         Objects.requireNonNull(getCommand("heal")).setExecutor(new DoctorCommands(playersJobsList));
 
@@ -38,6 +49,7 @@ public class MinecraftRP extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("id")).setExecutor(ac);
         Objects.requireNonNull(getCommand("it")).setExecutor(ac);
         Objects.requireNonNull(getCommand("roll")).setExecutor(ac);
+
 
         GuardCommands gc = new GuardCommands(playersJobsList);
         Objects.requireNonNull(getCommand("inspect")).setExecutor(gc);
@@ -67,6 +79,7 @@ public class MinecraftRP extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("sendMessageToSeller")).setExecutor(mS);
 
         getServer().getPluginManager().registerEvents(this, this);
+
         getLogger().info("MinecraftRP plugin enabled.");
     }
 
@@ -96,6 +109,28 @@ public class MinecraftRP extends JavaPlugin implements Listener {
                     player.setHealth(player.getHealth() + 0.5);
             }
         }, 140L);
+    }
+
+    @EventHandler
+    /*
+     * If the bank is getting robbed, checks if the player who is robbing it
+     * leaves the bank's zone. If he did, aborts the robbery.
+     */
+    public void robberExitsArea(PlayerMoveEvent event) {
+        if (!(event.getPlayer() instanceof Player))
+            return;
+        if (AllPlayersCommands.robber == null) return;
+        if (event.getPlayer().getEntityId() != AllPlayersCommands.robber.getEntityId() ) return;
+        //checks if player is leaving the bank area
+        if(event.getPlayer().getLocation().distance(BANK_LOCATION) > 50 ){
+            event.getPlayer().sendMessage("You are too far from the bank! The robbery failed...");
+            AllPlayersCommands.robber = null;
+            int old_robbing_task_id = AllPlayersCommands.robbing_task_id;
+            AllPlayersCommands.robbing_task_id = 0;
+            Bukkit.getServer().getScheduler().cancelTask(old_robbing_task_id);
+        }
+
+        return;
     }
 
     /* Assign default job 'Citizen' to all new players */

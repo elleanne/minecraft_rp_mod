@@ -18,13 +18,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Objects;
 
 import static org.bukkit.Bukkit.getServer;
 
 public class MinecraftRP extends JavaPlugin implements Listener {
     private SkinsRestorerAPI skinsRestorerAPI;
-    Map<Integer, String> playersJobsList = new HashMap<>();
+    Map<UUID, String> playersJobsList = new HashMap<>();
     final static LandClaims lc = new LandClaims();
     Location BANK_LOCATION;
 
@@ -40,10 +41,10 @@ public class MinecraftRP extends JavaPlugin implements Listener {
         AllPlayersCommands.plugin = this;
 
         // Commands
-
-        Objects.requireNonNull(getCommand("job")).setExecutor(new JobsCommand(playersJobsList));
+        Objects.requireNonNull(getCommand("job")).setExecutor(jm);
         Objects.requireNonNull(getCommand("heal")).setExecutor(new DoctorCommands(playersJobsList));
 
+      
         AllPlayersCommands ac = new AllPlayersCommands();
         Objects.requireNonNull(getCommand("me")).setExecutor(ac);
         Objects.requireNonNull(getCommand("id")).setExecutor(ac);
@@ -78,8 +79,12 @@ public class MinecraftRP extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("checkMarketItems")).setExecutor(mS);
         Objects.requireNonNull(getCommand("sendMessageToSeller")).setExecutor(mS);
 
-        getServer().getPluginManager().registerEvents(this, this);
-
+        // Events
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new EnderChestManager(), this);
+        pm.registerEvents(jm, this);
+        pm.registerEvents(this, this);
+      
         getLogger().info("MinecraftRP plugin enabled.");
     }
 
@@ -136,14 +141,14 @@ public class MinecraftRP extends JavaPlugin implements Listener {
     /* Assign default job 'Citizen' to all new players */
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        playersJobsList.put(event.getPlayer().getEntityId(), "Civilian");
+        playersJobsList.put(event.getPlayer().getUniqueId(), "Civilian");
         event.getPlayer().sendMessage(ChatColor.BLUE + "You are now a civilian");
     }
 
     /* Deletes the stored job of a player when he disconnects */
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
-        playersJobsList.remove(event.getPlayer().getEntityId());
+        playersJobsList.remove(event.getPlayer().getUniqueId());
         skinsRestorerAPI.removeSkin(event.getPlayer().getName());
     }
 

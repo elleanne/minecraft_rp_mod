@@ -1,6 +1,7 @@
 package mlh.goofygoofies.minecraft_rp;
 
 import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -11,9 +12,9 @@ import org.bukkit.entity.Player;
 
 public class DoctorCommands implements CommandExecutor {
     public CommandSender sender;
-    private static Map<Integer, String> playersJobsList;
+    private static Map<UUID, String> playersJobsList;
 
-    public DoctorCommands(Map<Integer, String> playersJobsList) {
+    public DoctorCommands(Map<UUID, String> playersJobsList) {
         DoctorCommands.playersJobsList = playersJobsList;
     }
 
@@ -55,7 +56,7 @@ public class DoctorCommands implements CommandExecutor {
 
         // Check job
         Player player = (Player) sender;
-        if (playersJobsList.get(player.getEntityId()) != "doctor") {
+        if (playersJobsList.get(player.getUniqueId()) != "doctor") {
             sender.sendMessage(ChatColor.RED + "You do not have the rights to use this command");
             return true;
         }

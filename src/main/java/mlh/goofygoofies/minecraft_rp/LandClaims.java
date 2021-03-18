@@ -47,8 +47,6 @@ public class LandClaims implements CommandExecutor, TabCompleter {
             bReader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        } catch (IOException io) {
-            io.printStackTrace();
         }
         return name;
     }
@@ -61,7 +59,6 @@ public class LandClaims implements CommandExecutor, TabCompleter {
         try {
             br = new BufferedWriter(new FileWriter("LandClaims.csv"));
             StringBuilder sb = new StringBuilder();
-
             // Append strings from array
             for (int i = 0; i < landClaims.length; i++) {
                 for (int j = 0; j < landClaims[i].length; j++) {
@@ -76,11 +73,10 @@ public class LandClaims implements CommandExecutor, TabCompleter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
-     *
+     * claim land for this player if land is claimable and available
      * @param p
      * @return
      */
@@ -114,7 +110,7 @@ public class LandClaims implements CommandExecutor, TabCompleter {
             }
             for (int i = -1; i < 2; i++) { // if any of the 9 blocks are free, and some are only claimed by this player,
                 // set all blocks to claimed and set value to player's name
-                int l =  xCoor + i;
+                int l = xCoor + i;
                 for (int j = -1; j < 2; j++) {
                     int m = yCoor + j;
                     landClaims[l][m] = p.getPlayerListName();
@@ -141,7 +137,6 @@ public class LandClaims implements CommandExecutor, TabCompleter {
         } else {
             return false;
         }
-
     }
 
     /**
@@ -268,12 +263,6 @@ public class LandClaims implements CommandExecutor, TabCompleter {
             receiver.sendMessage(receiver.getDisplayName() + ", you do not have enough gold to pay for this land.");
             return false;
         }
-        // {x=[y,y,y], x=[y,y]}
-//        if (!landToTransfer.startsWith("{") || !landToTransfer.endsWith("}")) {
-//            player.sendMessage("wrong format for list of land to transfer. Should be: x=y,y,y ; x=y,y");
-//            return false;
-//        }
-
         String[] xYValues = landToTransfer.split(";");
 
         HashMap<Integer, Integer[]> allLandTransferable = new HashMap<>();
@@ -282,7 +271,6 @@ public class LandClaims implements CommandExecutor, TabCompleter {
             String[] splitXY = xy.split("=");
             int x = Integer.parseInt(splitXY[0]);
             String[] yCoors = splitXY[1].split(",");
-
             // check that input is owned by player and valid ownable land and returns integer array of y coordinates
             Integer[] yCoorsInt = checkValidClaim(player, x, yCoors);
             if (yCoorsInt == null) return false;
@@ -295,6 +283,7 @@ public class LandClaims implements CommandExecutor, TabCompleter {
     /**
      * Helper function for transferLand,
      * once all error checking has been done, this function actually does the transfer
+     *
      * @param p
      * @param r
      * @param allLandTransferable
@@ -311,7 +300,7 @@ public class LandClaims implements CommandExecutor, TabCompleter {
             for (int j : yCoors) {
                 int l = key - X_START;
                 int m = j - Y_START;
-                if(l >= 0 && l < 500 && m >= 0 && m < 500 ) {
+                if (l >= 0 && l < 500 && m >= 0 && m < 500) {
                     p.sendMessage(landClaims[l][m] + "");
                     landClaims[l][m] = recieverName;
                     p.sendMessage(landClaims[l][m] + "");
@@ -354,7 +343,7 @@ public class LandClaims implements CommandExecutor, TabCompleter {
     }
 
     /**
-     *
+     * Used in MineCraftRP to listen for a player being attacked
      * @param player
      * @return
      */
@@ -362,6 +351,7 @@ public class LandClaims implements CommandExecutor, TabCompleter {
         return getClaim(player);
     }
 
+    /** Commands to claim/unclaim land, check claims, heal when on owned land, and transfer land to another player **/
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         Player player; // check that sender is a player
@@ -371,19 +361,18 @@ public class LandClaims implements CommandExecutor, TabCompleter {
             sender.sendMessage("You must be a player!");
             return false;
         }
-
-        if (cmd.getName().equalsIgnoreCase("claim") ) { // claim land
+        if (cmd.getName().equalsIgnoreCase("claim")) { // claim land
             return setClaim(player);
-        } else if (cmd.getName().equalsIgnoreCase("unclaim") ) { // unclaim land
+        } else if (cmd.getName().equalsIgnoreCase("unclaim")) { // unclaim land
             return unclaim(player);
-        } else if (cmd.getName().equalsIgnoreCase("selfheal") ) { // self heal this player when on land
+        } else if (cmd.getName().equalsIgnoreCase("selfheal")) { // self heal this player when on land
             // owned by this player
             if (getClaim(player)) {
                 return resetHealth(player);
             } else {
                 player.sendMessage("You cannot heal yourself when you are not on your land.");
             }
-        } else if (cmd.getName().equalsIgnoreCase("transfer_land") ) {
+        } else if (cmd.getName().equalsIgnoreCase("transfer_land")) {
             if (args.length <= 0) {
                 player.sendMessage("Please use command with the name player to send and a list of the land to transfer inside of '{LIST}'");
             } else if (args.length == 3) {
@@ -397,7 +386,7 @@ public class LandClaims implements CommandExecutor, TabCompleter {
             } else {
                 player.sendMessage("Wrong format! You need 3 arguments to use this command");
             }
-        } else if (cmd.getName().equalsIgnoreCase("check_land") ) {
+        } else if (cmd.getName().equalsIgnoreCase("check_land")) {
             return checkLand(player);
         }
 

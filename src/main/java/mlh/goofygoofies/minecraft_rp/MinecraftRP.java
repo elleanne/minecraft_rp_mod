@@ -3,6 +3,7 @@ package mlh.goofygoofies.minecraft_rp;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -10,7 +11,6 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.entity.Player;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -29,44 +29,42 @@ public class MinecraftRP extends JavaPlugin implements Listener {
         skinsRestorerAPI = SkinsRestorerAPI.getApi();
         getLogger().info(skinsRestorerAPI.toString());
 
-            // Commands
-            Objects.requireNonNull(getCommand("job")).setExecutor(new JobsCommand(playersJobsList));
-            Objects.requireNonNull(getCommand("heal")).setExecutor(new DoctorCommands(playersJobsList));
+        // Commands
+        Objects.requireNonNull(getCommand("job")).setExecutor(new JobsCommand(playersJobsList));
+        Objects.requireNonNull(getCommand("heal")).setExecutor(new DoctorCommands(playersJobsList));
 
-            AllPlayersCommands ac = new AllPlayersCommands();
-            Objects.requireNonNull(getCommand("me")).setExecutor(ac);
-            Objects.requireNonNull(getCommand("id")).setExecutor(ac);
-            Objects.requireNonNull(getCommand("it")).setExecutor(ac);
-            Objects.requireNonNull(getCommand("roll")).setExecutor(ac);
+        AllPlayersCommands ac = new AllPlayersCommands();
+        Objects.requireNonNull(getCommand("me")).setExecutor(ac);
+        Objects.requireNonNull(getCommand("id")).setExecutor(ac);
+        Objects.requireNonNull(getCommand("it")).setExecutor(ac);
+        Objects.requireNonNull(getCommand("roll")).setExecutor(ac);
 
-            GuardCommands gc = new GuardCommands(playersJobsList);
-            Objects.requireNonNull(getCommand("inspect")).setExecutor(gc);
-            Objects.requireNonNull(getCommand("jail")).setExecutor(gc);
+        GuardCommands gc = new GuardCommands(playersJobsList);
+        Objects.requireNonNull(getCommand("inspect")).setExecutor(gc);
+        Objects.requireNonNull(getCommand("jail")).setExecutor(gc);
 
-            // Land claims
-
+        // Land claims
         try {
             lc.loadLandClaims();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        getCommand("claim").setExecutor(lc);
-            getCommand("selfheal").setExecutor(lc);
-            getCommand("unclaim").setExecutor(lc);
-            getCommand("check_land").setExecutor(lc);
-            getCommand("transfer_land").setExecutor(lc);
+        Objects.requireNonNull(getCommand("claim")).setExecutor(lc);
+        Objects.requireNonNull(getCommand("selfheal")).setExecutor(lc);
+        Objects.requireNonNull(getCommand("unclaim")).setExecutor(lc);
+        Objects.requireNonNull(getCommand("check_land")).setExecutor(lc);
+        Objects.requireNonNull(getCommand("transfer_land")).setExecutor(lc);
 
-            Market m = new Market();
-            Objects.requireNonNull(getCommand("transfer_money")).setExecutor(m);
-            Objects.requireNonNull(getCommand("transfer_itemFor$")).setExecutor(m);
+        Market m = new Market();
+        Objects.requireNonNull(getCommand("transfer_money")).setExecutor(m);
+        Objects.requireNonNull(getCommand("transfer_itemFor$")).setExecutor(m);
 
         MarketShop mS = new MarketShop();
-            Objects.requireNonNull(getCommand("addShopItem")).setExecutor(mS);
-            Objects.requireNonNull(getCommand("removeShopItem")).setExecutor(mS);
-            Objects.requireNonNull(getCommand("checkForItemToBuy")).setExecutor(mS);
-            Objects.requireNonNull(getCommand("checkMarketItems")).setExecutor(mS);
-            Objects.requireNonNull(getCommand("sendMessageToSeller")).setExecutor(mS);
-
+        Objects.requireNonNull(getCommand("addShopItem")).setExecutor(mS);
+        Objects.requireNonNull(getCommand("removeShopItem")).setExecutor(mS);
+        Objects.requireNonNull(getCommand("checkForItemToBuy")).setExecutor(mS);
+        Objects.requireNonNull(getCommand("checkMarketItems")).setExecutor(mS);
+        Objects.requireNonNull(getCommand("sendMessageToSeller")).setExecutor(mS);
 
         getServer().getPluginManager().registerEvents(this, this);
         getLogger().info("MinecraftRP plugin enabled.");
@@ -116,14 +114,11 @@ public class MinecraftRP extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onAttack(EntityDamageByEntityEvent event) {
-        if (((event.getDamager() instanceof Player)) && ((event.getEntity() instanceof Player)))
-        {
-            //Player damager = (Player)event.getDamager();
-            Player victim = (Player)event.getEntity();
-            if(lc.getClaim(victim)) {
+        if (((event.getDamager() instanceof Player)) && ((event.getEntity() instanceof Player))) {
+            Player victim = (Player) event.getEntity();
+            if (lc.getClaim(victim)) {
                 victim.setNoDamageTicks(10);
             }
-            //damager.sendMessage("test");
         }
     }
 }

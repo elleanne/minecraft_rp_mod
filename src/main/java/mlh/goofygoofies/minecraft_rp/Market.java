@@ -15,17 +15,19 @@ import java.util.List;
 
 public class Market implements CommandExecutor, TabCompleter {
 
+    /**
+     * Commands to transfer money and land
+     **/
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
-        Player player ; // check that sender is a player
+        Player player; // check that sender is a player
         if (sender instanceof Player) {
             player = (Player) sender;
         } else {
             sender.sendMessage("You must be a player!");
             return false;
         }
-
-        if (cmd.getName().equalsIgnoreCase("transfer_money") ) { // claim land
+        if (cmd.getName().equalsIgnoreCase("transfer_money")) { // claim land
             if (args.length >= 2) {
                 Player reciever = Bukkit.getPlayerExact(args[0]); // check that reciever is a valid player
                 if (reciever != null) {
@@ -33,7 +35,7 @@ public class Market implements CommandExecutor, TabCompleter {
                 }
                 return true;
             }
-        } else if(cmd.getName().equalsIgnoreCase("transfer_itemFor$") ) {
+        } else if (cmd.getName().equalsIgnoreCase("transfer_itemFor$")) {
             if (args.length >= 4) {
                 Player receiver = Bukkit.getPlayerExact(args[0]); // check that receiver is a valid player
                 if (receiver != null && player != receiver) {
@@ -59,6 +61,7 @@ public class Market implements CommandExecutor, TabCompleter {
     }
 
     /**
+     * Trade a specified amount of an item for a specified amount of gold
      * sender is seller, receiver is buyer
      * @param sender
      * @param reciever
@@ -67,8 +70,8 @@ public class Market implements CommandExecutor, TabCompleter {
      * @param goldAmount
      */
     public void tradeItemForGold(Player sender, Player reciever, String item, String itemAmount, String goldAmount) {
-        int intItemAmount ;
-        int intGoldAmount ;
+        int intItemAmount;
+        int intGoldAmount;
         try {
             intItemAmount = Integer.parseInt(itemAmount);
             intGoldAmount = Integer.parseInt(goldAmount);
@@ -78,18 +81,20 @@ public class Market implements CommandExecutor, TabCompleter {
         }
 
         item = item.toUpperCase(); // sender is seller, receiver is buyer
+        item = item.replace(" ", "_"); // in case the player doesn't add the underscore, add it
+
         Material itemToTrade = Material.getMaterial(item);
-        if (itemToTrade == null) {
+        if (itemToTrade == null) { // check that the input for item was valid
             sender.sendMessage("Invalid input item type. Did not send to " + reciever.getDisplayName() + ".");
             return;
         }
-        ItemStack[] senderInv = sender.getInventory().getContents();
 
         // check that the sender has the items and the buyer has the money
-        if(checkInventory(senderInv, intItemAmount, itemToTrade)) {
+        ItemStack[] senderInv = sender.getInventory().getContents();
+        if (checkInventory(senderInv, intItemAmount, itemToTrade)) {
             String hasGold = checkPlayerGold(reciever, intGoldAmount);
-            if (hasGold != null ) {
-                if(intGoldAmount == 0) { // if giving for free, only transfer the item
+            if (hasGold != null) {
+                if (intGoldAmount == 0) { // if giving for free, only transfer the item
                     transferItem(sender, reciever, senderInv, itemToTrade, intItemAmount);
                 } else {
                     transferItem(sender, reciever, senderInv, itemToTrade, intItemAmount);
@@ -108,7 +113,7 @@ public class Market implements CommandExecutor, TabCompleter {
      * @param amountToTransfer
      */
     private void transferMoney(Player sender, Player reciever, String amountToTransfer) {
-        int amount ;
+        int amount;
         try {
             amount = Integer.parseInt(amountToTransfer);
         } catch (NumberFormatException e) {
@@ -123,7 +128,7 @@ public class Market implements CommandExecutor, TabCompleter {
         for (ItemStack is : sItems) {
             if (amount > 0) { // only enter if amount has not been decremented to 0
                 if (is != null) {
-                    if ( is.getType() == Material.GOLD_INGOT ) {
+                    if (is.getType() == Material.GOLD_INGOT) {
                         int count = is.getAmount();
                         if (count > amount) {
                             is.setAmount(count - amount);
@@ -153,34 +158,42 @@ public class Market implements CommandExecutor, TabCompleter {
             ItemStack item = new ItemStack(Material.GOLD_INGOT, amountTemp);
             reciever.getInventory().addItem(item);
         } else if (amount > 0) { // Did not find enough gold in sender's inventory, sending what was found
-            sender.sendMessage( "You did not have " + amountTemp + " gold. Sending " + (amountTemp - amount) + " instead." );
+            sender.sendMessage("You did not have " + amountTemp + " gold. Sending " + (amountTemp - amount) + " instead.");
             amountTemp = amountTemp - amount;
             ItemStack item = new ItemStack(Material.GOLD_INGOT, amountTemp);
             reciever.getInventory().addItem(item);
         }
-        sender.sendMessage( reciever.getDisplayName() + " recieved " + amountTemp + " gold." );
+        sender.sendMessage(reciever.getDisplayName() + " recieved " + amountTemp + " gold.");
         reciever.sendMessage(sender.getDisplayName() + " sent you " + amountTemp + " gold.");
     }
 
+    /**
+     * Transfer an item between players
+     * @param sender
+     * @param receiver
+     * @param senderInv
+     * @param item
+     * @param amount
+     */
     public void transferItem(Player sender, Player receiver, ItemStack[] senderInv, Material item, int amount) {
         // sender is seller, receiver is buyer
         ItemStack thisItem = new ItemStack(item, amount); // send buyer the item
         receiver.getInventory().addItem(thisItem);
 
-            for (ItemStack is : senderInv) {
-                if (is != null && amount > 0) {
-                    if (is.getType() == item) {
-                        int itemQuant = is.getAmount();
-                        if (itemQuant >= amount) {
-                            is.setAmount(itemQuant - amount);
-                            amount = 0;
-                        } else {
-                            is.setAmount(0);
-                            amount -= itemQuant;
-                        }
+        for (ItemStack is : senderInv) {
+            if (is != null && amount > 0) {
+                if (is.getType() == item) {
+                    int itemQuant = is.getAmount();
+                    if (itemQuant >= amount) {
+                        is.setAmount(itemQuant - amount);
+                        amount = 0;
+                    } else {
+                        is.setAmount(0);
+                        amount -= itemQuant;
                     }
                 }
             }
+        }
     }
 
     /**
@@ -193,8 +206,8 @@ public class Market implements CommandExecutor, TabCompleter {
     public boolean checkInventory(ItemStack[] inventory, int amount, Material item) {
         int count = 0;
         for (ItemStack is : inventory) {
-            if(is != null && amount > count) {
-                if( is.getType() == item ) {
+            if (is != null && amount > count) {
+                if (is.getType() == item) {
                     int itemQuant = is.getAmount();
                     if (itemQuant >= amount) {
                         return true;
@@ -204,7 +217,7 @@ public class Market implements CommandExecutor, TabCompleter {
                 }
             }
         }
-        if(count >= amount) return true;
+        if (count >= amount) return true;
         return false;
     }
 
@@ -217,21 +230,21 @@ public class Market implements CommandExecutor, TabCompleter {
     public static String checkPlayerGold(Player p, int amountOfGold) {
         if (amountOfGold == 0) return "0";
         ItemStack[] stack = p.getInventory().getContents();
-        if ( stack.length == 0 ) return null;
+        if (stack.length == 0) return null;
         int countOfGold = 0;
-        for (int i = 0; i < stack.length; i++) {
-            if (stack[i] != null) {
-                if (stack[i].getType() == Material.GOLD_INGOT) {
-                    if (stack[i].getAmount() >= amountOfGold) {
+        for (ItemStack itemStack : stack) {
+            if (itemStack != null) {
+                if (itemStack.getType() == Material.GOLD_INGOT) {
+                    if (itemStack.getAmount() >= amountOfGold) {
                         return "ingots";
-                    } else if (stack[i].getAmount() > 0) {
-                        countOfGold += stack[i].getAmount();
+                    } else if (itemStack.getAmount() > 0) {
+                        countOfGold += itemStack.getAmount();
                     }
-                } else if (stack[i].getType() == Material.GOLD_BLOCK) {
-                    if (stack[i].getAmount() >= amountOfGold / 4) {
+                } else if (itemStack.getType() == Material.GOLD_BLOCK) {
+                    if (itemStack.getAmount() >= amountOfGold / 4) {
                         return "blocks";
-                    } else if (stack[i].getAmount() > 0) {
-                        countOfGold += stack[i].getAmount() * 4; // a gold block is worth 4 gold ingots
+                    } else if (itemStack.getAmount() > 0) {
+                        countOfGold += itemStack.getAmount() * 4; // a gold block is worth 4 gold ingots
                     }
                 }
             }

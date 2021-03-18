@@ -19,11 +19,19 @@ public class MarketShop implements CommandExecutor {
     private final int MARKET_X_BOTTOM = 7200;
     private final int MARKET_Y_BOTTOM = 180;
 
+    /**
+     * Add an item for sale in the shop hashmap
+     * @param material
+     * @param sellerName
+     * @param amountOfItem
+     * @param cost
+     */
     public void addShopItem(Material material, String sellerName, int amountOfItem, int cost) {
+        ArrayList<String[]> listOfThisItem;
         if (shopMap.containsKey(material)) {
-            ArrayList<String[]> listOfThisItem = shopMap.get(material);
-            for (String[] listing: listOfThisItem) {
-                if(listing[0].compareTo(sellerName) == 0) {
+            listOfThisItem = shopMap.get(material);
+            for (String[] listing : listOfThisItem) { // check if the seller has already listed this item
+                if (listing[0].compareTo(sellerName) == 0) {
                     listOfThisItem.remove(listing);
                     int amount = Integer.parseInt(listing[1]);
                     int c = Integer.parseInt(listing[2]);
@@ -35,111 +43,130 @@ public class MarketShop implements CommandExecutor {
                     shopMap.put(material, listOfThisItem);
                     return;
                 }
-            }
-
-            // if this line is reached, seller has not already listed this item. Add new listing.
-            String[] listing = {sellerName, ("" + amountOfItem), ("" + cost) };
+            } // if this line is reached, seller has not already listed this item. Add new listing.
+            String[] listing = {sellerName, ("" + amountOfItem), ("" + cost)};
             listOfThisItem.add(listing);
-            shopMap.put(material, listOfThisItem);
-        } else {
-            // there are no listing for this item from any seller, make a new key!
-            ArrayList<String[]> listOfThisItem = new ArrayList<>();
-            String[] listing = {sellerName, ("" + amountOfItem), ("" + cost) };
+        } else { // there are no listing for this item from any seller, make a new key!
+            listOfThisItem = new ArrayList<>();
+            String[] listing = {sellerName, ("" + amountOfItem), ("" + cost)};
             listOfThisItem.add(listing);
-            shopMap.put(material, listOfThisItem);
         }
+        shopMap.put(material, listOfThisItem);
     }
 
+    /**
+     * Remove an item from the shop hashmap
+     * @param material
+     * @param sellerName
+     * @param amountOfItem
+     * @param cost
+     */
     public void removeShopItem(Material material, String sellerName, int amountOfItem, int cost) {
         if (shopMap.containsKey(material)) {
             ArrayList<String[]> listOfThisItem = shopMap.get(material);
-            for (String[] listing: listOfThisItem) {
-                if(listing[0].compareTo(sellerName) == 0) {
+            for (String[] listing : listOfThisItem) {
+                if (listing[0].compareTo(sellerName) == 0) {
                     listOfThisItem.remove(listing);
                     int amount = Integer.parseInt(listing[1]);
                     int c = Integer.parseInt(listing[2]);
                     amount -= amountOfItem;
                     c -= cost;
-                    if (amount <= 0 || c <= 0) {
-                        shopMap.put(material, listOfThisItem);
-                        return;
-                    } else {
+                    if (amount > 0 && c > 0) {
                         listing[1] = "" + amount;
                         listing[2] = "" + c;
                         listOfThisItem.add(listing);
-                        shopMap.put(material, listOfThisItem);
-                        return;
                     }
+                    shopMap.put(material, listOfThisItem);
+                    return;
                 }
             } // if this line is reached, this seller has not already listed this item.
         }
     }
 
+    /**
+     * Check the market for all listings
+     * @param player
+     */
     public void checkMarketShop(Player player) {
         Set<Material> keys = shopMap.keySet();
-        if(keys.size() == 0) {
+        if (keys.size() == 0) {
             player.sendMessage("There is nothing for sale in the market today.");
             return;
         }
         player.sendMessage("Here is what is for sale today: ");
         for (Material key : keys) {
             ArrayList<String[]> sellerItemData = shopMap.get(key);
-            for(String[] seller: sellerItemData) {
-                player.sendMessage(key + " amount:" + seller[1] + " cost:" + seller[2] + " from:" + seller[0] + "; " );
+            for (String[] seller : sellerItemData) {
+                player.sendMessage(key + " amount:" + seller[1] + " cost:" + seller[2] + " from:" + seller[0] + "; ");
             }
         }
     }
 
+    /**
+     * Look for a particular item for sale in the shop
+     * @param player
+     * @param item
+     */
     public void checkMarketShopForItem(Player player, String item) {
         Material material = Material.getMaterial(item.toUpperCase());
         if (material == null) return;
         if (shopMap.containsKey(material)) {
             ArrayList<String[]> listOfSellers = shopMap.get(material);
-            for(String[] seller: listOfSellers) {
-                player.sendMessage(item.toUpperCase() + " amount:" + seller[1] + " cost:" + seller[2] + " from:" + seller[0] + "; " );
+            for (String[] seller : listOfSellers) {
+                player.sendMessage(item.toUpperCase() + " amount:" + seller[1] + " cost:" + seller[2] + " from:" + seller[0] + "; ");
             }
         } else {
             player.sendMessage(item.toUpperCase() + " is not for sale in the market today.");
         }
     }
 
+    /**
+     * @param buyerName
+     * @param sellerName
+     * @param item
+     * @param amountOfItem
+     * @return
+     */
     public boolean sendMessageToSeller(String buyerName, String sellerName, String item, String amountOfItem) {
         Player seller = Bukkit.getPlayerExact(sellerName); // check that receiver is a valid player
         if (seller != null) {
-
             seller.sendMessage(sellerName + ", " + buyerName + " wants to buy " + amountOfItem + " of your item, " + item + ". If you accept, use the transfer command to start the transaction");
             return checkPlayerLocation(seller);
-
-
         }
         return false;
     }
 
+    /**
+     * Check if a player is inside the market coordinates
+     * @param player
+     * @return
+     */
     public boolean checkPlayerLocation(Player player) {
         int x = player.getLocation().getBlockX();
         int y = player.getLocation().getBlockY();
-        if ( x <= MARKET_X_TOP || x >= MARKET_X_BOTTOM || y <= MARKET_Y_TOP || y >= MARKET_Y_BOTTOM) {
+        if (x <= MARKET_X_TOP || x >= MARKET_X_BOTTOM || y <= MARKET_Y_TOP || y >= MARKET_Y_BOTTOM) {
             player.sendMessage(player.getDisplayName() + " is not inside the market.");
             return false;
         }
         return true;
     }
 
+    /**
+     * Commands for adding, removing, checking inventory, send message to seller
+     **/
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
-        Player player ; // check that sender is a player
+        Player player; // check that sender is a player
         if (sender instanceof Player) {
             player = (Player) sender;
-            if( !checkPlayerLocation(player) ) {
+            if (!checkPlayerLocation(player)) {
                 return false;
             }
         } else {
             sender.sendMessage("You must be a player!");
             return false;
         }
-
-
-        if (cmd.getName().equalsIgnoreCase("addShopItem") ) {
+        if (cmd.getName().equalsIgnoreCase("addShopItem")) {
             // Material is, int amountOfItem, int cost
             if (args.length >= 3) {
                 Material item = Material.getMaterial(args[0].toUpperCase());
@@ -155,7 +182,7 @@ public class MarketShop implements CommandExecutor {
                 }
                 return true;
             }
-        } else if (cmd.getName().equalsIgnoreCase("removeShopItem") ) {
+        } else if (cmd.getName().equalsIgnoreCase("removeShopItem")) {
             // Material is, int amountOfItem, int cost
             if (args.length >= 3) {
                 Material item = Material.getMaterial(args[0].toUpperCase());
@@ -171,19 +198,21 @@ public class MarketShop implements CommandExecutor {
                 }
                 return true;
             }
-        } else if (cmd.getName().equalsIgnoreCase("checkForItemToBuy") ) {
+        } else if (cmd.getName().equalsIgnoreCase("checkForItemToBuy")) {
             if (args.length == 1) {
                 checkMarketShopForItem(player, args[0]);
             } else {
                 player.sendMessage("invalid number of arguments. Please add the item to look up.");
             }
-        } else if (cmd.getName().equalsIgnoreCase("checkMarketItems") ) {
+        } else if (cmd.getName().equalsIgnoreCase("checkMarketItems")) {
             checkMarketShop(player);
-        } else if( cmd.getName().equalsIgnoreCase("sendMessageToSeller") ) {
-            if(args.length == 3) {
+        } else if (cmd.getName().equalsIgnoreCase("sendMessageToSeller")) {
+            if (args.length == 3) {
                 boolean checkSent = sendMessageToSeller(player.getDisplayName(), args[0], args[1], args[2]);
                 if (checkSent) player.sendMessage("Your message was sent to " + args[0] + ".");
-                else { player.sendMessage("Invalid seller name or the seller is not in the market.");}
+                else {
+                    player.sendMessage("Invalid seller name or the seller is not in the market.");
+                }
             } else {
                 player.sendMessage("please include: seller name, item to buy, and amount of the item you want to buy.");
             }

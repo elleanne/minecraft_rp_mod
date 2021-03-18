@@ -27,11 +27,9 @@ public class MinecraftRP extends JavaPlugin implements Listener {
     private SkinsRestorerAPI skinsRestorerAPI;
     Map<UUID, String> playersJobsList = new HashMap<>();
     final static LandClaims lc = new LandClaims();
-    Location BANK_LOCATION;
 
     @Override
     public void onEnable() {
-        BANK_LOCATION = new Location(getServer().getWorlds().get(0), 7000, 86, -5110);
         // SkinsRestorer
         getLogger().info("Loading SkinsRestorer API...");
         skinsRestorerAPI = SkinsRestorerAPI.getApi();
@@ -118,17 +116,17 @@ public class MinecraftRP extends JavaPlugin implements Listener {
 
     @EventHandler
     /*
-     * If the bank is getting robbed, checks if the player who is robbing it
-     * leaves the bank's zone. If he did, aborts the robbery.
+     * If the ship is getting robbed, checks if the player who is robbing it
+     * leaves the ship's zone. If he did, aborts the robbery.
      */
     public void robberExitsArea(PlayerMoveEvent event) {
         if (!(event.getPlayer() instanceof Player))
             return;
         if (AllPlayersCommands.robber == null) return;
         if (event.getPlayer().getEntityId() != AllPlayersCommands.robber.getEntityId() ) return;
-        //checks if player is leaving the bank area
-        if(event.getPlayer().getLocation().distance(BANK_LOCATION) > 50 ){
-            event.getPlayer().sendMessage("You are too far from the bank! The robbery failed...");
+        //checks if player is leaving the ship area
+        if(event.getPlayer().getLocation().distance(AllPlayersCommands.SHIP_LOCATION) > 50 ){
+            event.getPlayer().sendMessage("You are too far from the ship! The robbery failed...");
             AllPlayersCommands.robber = null;
             int old_robbing_task_id = AllPlayersCommands.robbing_task_id;
             AllPlayersCommands.robbing_task_id = 0;

@@ -33,9 +33,9 @@ import static org.bukkit.Bukkit.getServer;
 
 public class AllPlayersCommands implements CommandExecutor, TabCompleter, Listener {
     public CommandSender sender;
-    static public Player robber = null; // set to null if no one is robbing the bank
-    static int robbing_task_id = 0; // set to 0 if no one is robbing the bank
-    Location BANK_LOCATION = new Location(getServer().getWorlds().get(0), 7000, 86, -5110);
+    static public Player robber = null; // set to null if no one is robbing the ship
+    static int robbing_task_id = 0; // set to 0 if no one is robbing the ship
+    public static Location SHIP_LOCATION = new Location(getServer().getWorlds().get(0), 6910, 67, -4819);
 
     static Plugin plugin;
 
@@ -100,22 +100,22 @@ public class AllPlayersCommands implements CommandExecutor, TabCompleter, Listen
 
     public boolean rob(){
 
-        //Check if bank is already being robbed
+        //Check if ship is already being looted
         if (robber != null) {
-            sender.sendMessage("The bank is already being robbed...");
+            sender.sendMessage("The ship is already being looted...");
             return true;
         }
 
-        //checks that player is inside the bank's vault (which is a chunk)
+        //checks that player is inside the ship's vault (which is a chunk)
         Player p = (Player) sender;
 
         //TODO change to distance radius
-        if (p.getLocation().distance(BANK_LOCATION) > 50 ){
-            sender.sendMessage("You have to be inside the bank in order to rob it!");
+        if (p.getLocation().distance(SHIP_LOCATION) > 50 ){
+            sender.sendMessage("You have to be inside the ship in order to loot it!");
             return true;
         }
 
-        //Start robbing the bank (with scheduler/multi-threading to deal with the timer)
+        //Start robbing the ship (with scheduler/multi-threading to deal with the timer)
         robber = p;
         BukkitScheduler scheduler = getServer().getScheduler();
         int [] time_left = {8400}; //TODO CHANGE 1200 to 8400ticks = 20ticks * 60 * 7 = 7minutes
@@ -133,12 +133,12 @@ public class AllPlayersCommands implements CommandExecutor, TabCompleter, Listen
                 if (x == Math.ceil(x)) sender.sendMessage(ChatColor.RED + String.valueOf(x) + "minutes left!");
                 }
                 else{
-                        sender.sendMessage("You successfully robbed the bank!");
+                        sender.sendMessage("You successfully looted the ship!");
                         //Gives 64 gold ingots to players
                         ItemStack[] gold_ingot_stack = {new ItemStack(Material.GOLD_INGOT, 64)};
                         robber.getInventory().addItem(gold_ingot_stack);
 
-                        Bukkit.broadcastMessage(ChatColor.RED + "THE BANK HAS BEEN ROBBED!");
+                        Bukkit.broadcastMessage(ChatColor.RED + "THE SHIP HAS BEEN LOOTED!");
                         robber = null;
                         int old_robbing_task_id = robbing_task_id;
                         robbing_task_id = 0;

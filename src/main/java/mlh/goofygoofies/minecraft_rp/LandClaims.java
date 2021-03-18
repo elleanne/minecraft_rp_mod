@@ -19,8 +19,8 @@ public class LandClaims implements CommandExecutor, TabCompleter {
 
     // X_START, Y_START are the coordinates to start eligible land that can be owned at.
     // TODO: Need to make function for admin to change this?
-    public final int X_START = 7000;
-    public final int Y_START = 80;
+    public final int X_START = 7050;
+    public final int Y_START = 50;
     protected String[][] landClaims = new String[500][500];
 
     /**

@@ -32,10 +32,10 @@ public class JobsManager implements CommandExecutor, Listener, Runnable, TabComp
     private static final HashMap<String, Job> jobs = new HashMap<String, Job>();
     static {
         jobs.put("doctor",
-                new Job("doctor", new Location(Bukkit.getServer().getWorlds().get(0), 6997, 86, -5110.561), 20));
+                new Job("doctor", new Location(Bukkit.getServer().getWorlds().get(0), 6997, 86, -5110.561), 5));
         jobs.put("guard",
-                new Job("guard", new Location(Bukkit.getServer().getWorlds().get(0), 6887, 99, -4883.720), 6));
-        jobs.put("judge", new Job("judge", null, 11));
+                new Job("guard", new Location(Bukkit.getServer().getWorlds().get(0), 6887, 99, -4883.720), 10));
+        jobs.put("judge", new Job("judge", null, 3));
     }
     /**
      * Time of day to pay salaries

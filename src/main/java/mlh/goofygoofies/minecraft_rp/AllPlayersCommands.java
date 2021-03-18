@@ -118,7 +118,7 @@ public class AllPlayersCommands implements CommandExecutor, TabCompleter, Listen
         //Start robbing the bank (with scheduler/multi-threading to deal with the timer)
         robber = p;
         BukkitScheduler scheduler = getServer().getScheduler();
-        int [] time_left = {1220}; //TODO CHANGE 1200 to 8400ticks = 20ticks * 60 * 7 = 7minutes
+        int [] time_left = {8400}; //TODO CHANGE 1200 to 8400ticks = 20ticks * 60 * 7 = 7minutes
 
         robbing_task_id = scheduler.scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override

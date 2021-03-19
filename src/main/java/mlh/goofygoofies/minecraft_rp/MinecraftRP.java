@@ -39,6 +39,7 @@ public class MinecraftRP extends JavaPlugin implements Listener {
         AllPlayersCommands.plugin = this;
 
         // Commands
+        JobsManager jm = new JobsManager(this, playersJobsList);
         Objects.requireNonNull(getCommand("job")).setExecutor(jm);
         Objects.requireNonNull(getCommand("heal")).setExecutor(new DoctorCommands(playersJobsList));
 
@@ -47,6 +48,7 @@ public class MinecraftRP extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("me")).setExecutor(ac);
         Objects.requireNonNull(getCommand("id")).setExecutor(ac);
         Objects.requireNonNull(getCommand("it")).setExecutor(ac);
+        Objects.requireNonNull(getCommand("rob")).setExecutor(ac);
         Objects.requireNonNull(getCommand("roll")).setExecutor(ac);
 
 

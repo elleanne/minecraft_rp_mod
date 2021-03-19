@@ -41,7 +41,6 @@ public class EnderChestManager implements Listener {
         if ((// Quick inventory swap (shift + click)
                 inventory == InventoryType.PLAYER &&
                 action == InventoryAction.MOVE_TO_OTHER_INVENTORY &&
-                // event.getWhoClicked().getOpenInventory().getTopInventory().getType() == InventoryType.ENDER_CHEST
                 event.getInventory().getType() == InventoryType.ENDER_CHEST
             )||
             (// Dropping an item into the ender chest

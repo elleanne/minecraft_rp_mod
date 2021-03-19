@@ -4,7 +4,6 @@ import net.skinsrestorer.api.SkinsRestorerAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -20,8 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.Objects;
-
-import static org.bukkit.Bukkit.getServer;
 
 public class MinecraftRP extends JavaPlugin implements Listener {
     private SkinsRestorerAPI skinsRestorerAPI;

@@ -135,6 +135,9 @@ public class JobsManager implements CommandExecutor, Listener, Runnable, TabComp
         plugin.getLogger().info("Payday!");
         for (Map.Entry<UUID, String> entry : playersJobsList.entrySet()) {
             Job job = jobs.get(entry.getValue());
+            if (job == null) {
+                continue;
+            }
             Player player = Bukkit.getPlayer(entry.getKey());
             player.getEnderChest().addItem(new ItemStack(Material.GOLD_INGOT, job.salary));
             player.sendMessage(String.format("%sYou have been paid %s%sG%s for your work as a %s.", ChatColor.GREEN, ChatColor.GOLD, job.salary, ChatColor.GREEN, job.name));

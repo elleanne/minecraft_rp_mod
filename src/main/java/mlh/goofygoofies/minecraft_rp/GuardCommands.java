@@ -1,6 +1,7 @@
 package mlh.goofygoofies.minecraft_rp;
 
 import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -39,9 +40,9 @@ public class GuardCommands implements CommandExecutor {
         "SWORD", "BOW", "ARROW", "TNT", "DIAMOND"
     };
     public CommandSender sender;
-    private static Map<Integer, String> playersJobsList;
+    private static Map<UUID, String> playersJobsList;
 
-    public GuardCommands(Map<Integer, String> playersJobsList) {
+    public GuardCommands(Map<UUID, String> playersJobsList) {
         GuardCommands.playersJobsList = playersJobsList;
     }
 
@@ -137,7 +138,7 @@ public class GuardCommands implements CommandExecutor {
 
         // Check job
         Player player = (Player) sender;
-        if (playersJobsList.get(player.getEntityId()) != "guard") {
+        if (playersJobsList.get(player.getUniqueId()) != "guard") {
             sender.sendMessage(ChatColor.RED + "You do not have the rights to use this command");
             return true;
         }

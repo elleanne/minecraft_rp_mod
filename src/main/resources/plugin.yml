@@ -43,6 +43,9 @@ commands:
     usage: /ID shows you ID card to players near you.
     description: Show your ID card to players near you (first and last name).
 
+  rob:
+    usage: /rob
+    description: Starts robbing the bank.
   heal:
     usage: /heal <Player Name>
     description: Completely heals a player.
@@ -50,4 +53,33 @@ commands:
   job:
     usage: /job <Job Name (Policeman, Doctor, or Judge)>
     description: Changes the player's job.
+
+  transfer_money:
+    usage: /transfer_money <Player Name> <Integer Amount>
+    description: transfer some amount of money to another player
+
+  check_land:
+    description: for a player to check the land they own
+
+  transfer_land:
+    usage: /transfer_land <Player Name> <{List Coordinates}> <Integer Amount>
+
+  transfer_itemFor$:
+    usage: /transfer_itemFor$ <Player Name> <Material Item> <Integer Amount of Item> <Integer Amount of Gold>
+
+  addShopItem:
+    usage: /addShopItem <Material Item>  <Integer Amount of Item> <Integer Cost>
+
+  removeShopItem:
+    usage: /removeShopItem <Material Item>  <Integer Amount of Item> <Integer Cost>
+
+  checkForItemToBuy:
+    usage: /checkForItemToBuy <Material Item>
+
+  checkMarketItems:
+    description: check market for all items for sale
+
+  sendMessageToSeller:
+    usage: /sendMessageToSeller <Player sellerName> <Material item> <Integer amountOfItem>
+
 # permissions:

@@ -2,6 +2,7 @@
 data/lib/spigot-1.16.5.jar
 .vscode
 .idea
+/*.iml
 
 # Java build output
 bin

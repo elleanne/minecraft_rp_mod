@@ -103,4 +103,7 @@ sudo chmod +x ./gradlew
 
 The first run will take a while as Gradle downloads and sets itself up. Subsequent runs will be much faster.
 
-The output plugin JAR is in `build/libs`. Copy this into the `plugins` folder of your Bukkit server to install/update the plugin.
+Files to copy to your server `plugins` directory after building:
+- `build/libs/minecraft_rp_mod.jar`
+- Contents of `plugins` inside this repository (contains needed configuration and skin files)
+- [SkinsRestorer 14](https://github.com/SkinsRestorer/SkinsRestorerX/releases) JAR file

@@ -1,5 +1,5 @@
 # Minecraft Medieval Roleplay Mod
-A roleplay Bukkit plugin where players decide the story. Check out our [Devpost page](https://devpost.com/software/minecraft-medieval-roleplay-mod) to see demo videos!
+A roleplay Bukkit plugin where players decide the story! Check out our [Devpost page](https://devpost.com/software/minecraft-medieval-roleplay-mod) to see demo videos, or try it out yourself by joining the Minecraft server `minecraft.jkmartindale.dev`
 
 ##  Commands
 ###  Jobs

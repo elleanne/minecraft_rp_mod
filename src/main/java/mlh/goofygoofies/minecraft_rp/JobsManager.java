@@ -61,6 +61,11 @@ public class JobsManager implements CommandExecutor, Listener, Runnable, TabComp
             return true;
         }
 
+        // Check for a job first
+        if (args.length != 1) {
+            return false;
+        }
+
         Player player = (Player) sender;
         String jobName = args[0].toLowerCase();
 

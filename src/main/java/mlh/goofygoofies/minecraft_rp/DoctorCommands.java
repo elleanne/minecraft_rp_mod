@@ -57,7 +57,7 @@ public class DoctorCommands implements CommandExecutor {
         // Check job
         Player player = (Player) sender;
         if (playersJobsList.get(player.getUniqueId()) != "doctor") {
-            sender.sendMessage(ChatColor.RED + "You do not have the rights to use this command");
+            sender.sendMessage(ChatColor.RED + "You must be a doctor to use this command");
             return true;
         }
 
